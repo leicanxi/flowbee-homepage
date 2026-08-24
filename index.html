@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#faf8f2">
+  <title>FlowBee · 贴心服务，温暖接入</title>
+  <style>
+    :host, :root {
+      color-scheme: light;
+      --bg: oklch(0.99 0.004 92); --warm: #f0e5d0; --surface: #fff;
+      --ink: oklch(0.24 0.025 70); --muted: #625a4f; --line: oklch(0.9 0.015 88);
+      --accent: oklch(0.80 0.16 90); --accent-deep: oklch(0.62 0.15 80);
+      --accent-ink: oklch(0.33 0.07 72); --accent-soft: oklch(0.955 0.04 92);
+      --radius: 22px; --container: 1180px;
+      --ease: cubic-bezier(.16, 1, .3, 1);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", sans-serif;
+    }
+    :host { display: block; background: var(--bg); color: var(--ink); }
+    * { box-sizing: border-box; margin: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ink); line-height: 1.55; }
+    a { color: inherit; -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 3px solid var(--accent-deep); outline-offset: 3px; }
+    .container { width: min(100%, var(--container)); margin: 0 auto; padding-inline: 22px; }
+    .eyebrow { color: var(--accent-deep); font-size: 12px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; }
+    .button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; padding: 11px 22px; border: 1px solid transparent; border-radius: 999px; font-weight: 800; text-decoration: none; transition: transform .2s var(--ease), box-shadow .2s var(--ease), background .2s ease; touch-action: manipulation; }
+    .button:hover { transform: translateY(-2px); }
+    .button:active { transform: scale(.97); }
+    .button-primary { background: linear-gradient(180deg, oklch(0.86 0.11 92), var(--accent)); color: var(--accent-ink); box-shadow: inset 0 1px #ffffffaa, 0 8px 20px oklch(0.6 0.12 85 / .2); }
+    .button-secondary { border-color: var(--line); background: var(--surface); color: var(--ink); }
+
+    .site-nav { position: absolute; z-index: 10; top: 0; left: 0; right: 0; }
+    .nav-inner { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .nav-brand { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); font-size: 17px; font-weight: 850; letter-spacing: -.04em; text-decoration: none; }
+    .nav-mark { width: 22px; aspect-ratio: 1 / .92; display: grid; place-items: center; clip-path: polygon(25% 5%,75% 5%,100% 50%,75% 95%,25% 95%,0 50%); background: linear-gradient(180deg, oklch(.86 .12 92), var(--accent)); color: var(--accent-ink); font-size: 12px; }
+    .nav-links { display: none; align-items: center; gap: 24px; margin-left: auto; }
+    .nav-link { position: relative; color: var(--muted); font-size: 14px; font-weight: 700; text-decoration: none; }
+    .nav-link::after { content: ""; position: absolute; left: 0; right: 0; bottom: -5px; height: 1.5px; background: var(--accent-deep); border-radius: 9px; transform: scaleX(0); transition: transform .22s var(--ease); }
+    .nav-link:hover { color: var(--ink); } .nav-link:hover::after { transform: scaleX(1); }
+    .nav-login { min-height: 40px; padding: 8px 17px; font-size: 14px; }
+
+    .hero { position: relative; overflow: hidden; min-height: 67dvh; display: grid; align-items: center; padding-block: 80px 50px; }
+    .hero::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(90% 85% at 90% 0%, oklch(0.92 0.06 90 / .65), transparent 65%); }
+    .hero-grid { position: relative; display: grid; gap: 42px; }
+    .hero h1 { max-width: 10ch; margin-top: 14px; font-size: clamp(38px, 7vw, 65px); letter-spacing: -.05em; line-height: 1.05; text-wrap: balance; }
+    .hero-copy { max-width: 34ch; margin-top: 20px; color: var(--muted); font-size: clamp(16px, 2vw, 20px); font-weight: 600; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 27px; }
+    .hero-art { display: grid; place-items: center; position: relative; min-height: 202px; }
+    .api-journey { --pulse-mid: 132px; --pulse-end: 276px; position: relative; width: min(100%, 440px); min-height: 194px; padding: 24px 18px 14px; overflow: hidden; }
+    .api-journey::before { content: ""; position: absolute; inset: 8px -10px 0; background: radial-gradient(55% 70% at 54% 70%, oklch(.9 .08 90 / .72), transparent 72%); pointer-events: none; }
+    .journey-meta, .journey-url, .journey-response, .journey-route { position: relative; z-index: 1; }
+    .journey-meta { color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+    .journey-url { margin-top: 7px; font-size: clamp(20px, 5.5vw, 29px); font-weight: 800; letter-spacing: -.05em; white-space: nowrap; }
+    .journey-url span { color: var(--accent-deep); }
+    .journey-route { height: 78px; margin-top: 3px; }
+    .route-line { position: absolute; inset: 5px 0 0; width: 100%; height: 78px; overflow: visible; }
+    .route-line path { stroke: oklch(.68 .1 86 / .58); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-dasharray: 3 7; }
+    .route-stop { position: absolute; display: inline-flex; align-items: center; justify-content: center; min-height: 28px; padding-inline: 9px; border: 1px solid oklch(.75 .1 88 / .48); border-radius: 999px; background: oklch(1 0 0 / .72); color: var(--accent-ink); font-size: 11px; font-weight: 800; letter-spacing: .02em; box-shadow: 0 5px 13px oklch(.42 .04 80 / .08); backdrop-filter: blur(6px); }
+    .route-start { left: 0; top: 45px; } .route-middle { left: 38%; top: 6px; } .route-end { right: 0; top: 47px; }
+    .route-pulse { position: absolute; left: 0; top: 52px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent-deep); box-shadow: 0 0 0 5px oklch(.8 .16 90 / .16); }
+    .journey-response { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 12px; font-weight: 650; }
+    .response-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-deep); box-shadow: 0 0 0 4px oklch(.8 .16 90 / .16); }
+
+    .section { padding-block: 66px; }
+    .section-heading { max-width: 620px; margin-bottom: 28px; }
+    .section-heading h2 { margin-top: 10px; font-size: clamp(28px, 4vw, 43px); letter-spacing: -.04em; line-height: 1.12; text-wrap: balance; }
+    .section-heading p { max-width: 48ch; margin-top: 13px; color: var(--muted); }
+
+    .impact { padding-top: 12px; }
+    .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding-block: 20px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .stat-card { position: relative; min-width: 0; padding: 3px 10px 5px; }
+    .stat-card + .stat-card { border-left: 1px solid var(--line); }
+    .stat-card::after { content: ""; position: absolute; left: 50%; top: 48px; width: 17px; height: 17px; border: 1px solid oklch(.74 .13 88 / .6); border-radius: 50%; opacity: 0; pointer-events: none; transform: translateX(-50%) scale(.45); }
+    .stat-label { color: var(--muted); font-size: clamp(11px, 3.1vw, 14px); font-weight: 700; white-space: nowrap; }
+    .stat-number { display: block; margin-top: 12px; font-size: clamp(18px, 5.8vw, 52px); font-variant-numeric: tabular-nums; font-weight: 800; line-height: 1; letter-spacing: -.06em; white-space: nowrap; }
+    .stat-unit { display: block; margin-top: 7px; color: var(--accent-deep); font-size: clamp(9px, 2.5vw, 13px); font-weight: 800; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
+    .stat-note { display: none; }
+    .stats-status { margin-top: 16px; color: var(--muted); font-size: 13px; }
+
+    .support { padding-block: 36px; background: linear-gradient(90deg, transparent, oklch(.93 .06 91 / .7), transparent); }
+    .support-panel { display: grid; gap: 22px; padding-block: 30px; }
+    .support-panel h2 { margin-top: 10px; font-size: clamp(27px, 4vw, 40px); line-height: 1.15; letter-spacing: -.04em; }
+    .support-panel p { max-width: 52ch; margin-top: 14px; color: var(--muted); }
+    .support-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+    .support-hint { max-width: 30ch; color: var(--muted); font-size: 13px; }
+
+    .wishes { padding-bottom: 84px; overflow: hidden; }
+    .wish-board { display: grid; gap: 18px; }
+    .wish-marquee { position: relative; display: grid; gap: 10px; overflow: hidden; padding-block: 8px; mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+    .wish-track { display: flex; width: max-content; gap: 10px; will-change: transform; animation: drift 34s linear infinite; }
+    .wish-track--reverse { animation-direction: reverse; animation-duration: 39s; }
+    .wish-marquee:hover .wish-track, .wish-marquee:focus-within .wish-track { animation-play-state: paused; }
+    .wish { flex: 0 0 auto; display: inline-flex; align-items: center; min-height: 43px; padding: 10px 15px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); font-size: 14px; font-weight: 650; box-shadow: 0 4px 12px oklch(.35 .02 70 / .05); white-space: nowrap; }
+    .wish::before { content: "愿望"; margin-right: 8px; color: var(--accent-deep); font-size: 10px; font-weight: 800; letter-spacing: .1em; }
+    .wish-cta { position: relative; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 18px; min-height: 166px; padding: 25px; border: 1px solid oklch(.72 .12 86 / .55); border-radius: 18px 26px 20px 24px; background: linear-gradient(135deg, oklch(.98 .04 92), oklch(.91 .1 90)); box-shadow: 8px 10px 0 oklch(.72 .12 86 / .16); color: var(--accent-ink); text-decoration: none; transform: rotate(-.6deg); transition: transform .25s var(--ease), box-shadow .25s var(--ease); }
+    .wish-cta::after { content: ""; position: absolute; top: 14px; right: 18px; width: 24px; height: 6px; background: oklch(.82 .12 90 / .55); transform: rotate(9deg); }
+    .wish-cta:hover { transform: rotate(0) translateY(-3px); box-shadow: 10px 14px 0 oklch(.72 .12 86 / .2); }
+    .wish-cta h3 { margin-top: 7px; font-size: clamp(24px, 4vw, 32px); letter-spacing: -.04em; }
+    .wish-cta p { margin-top: 4px; color: var(--muted); font-size: 14px; }
+    .wish-cta .send { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--accent-ink); color: #fff; font-size: 22px; transition: transform .2s var(--ease); }
+    .wish-cta:hover .send { transform: translate(3px, -3px) rotate(-12deg); }
+    @keyframes drift { to { transform: translateX(-50%); } }
+    @property --count { syntax: '<integer>'; initial-value: 0; inherits: false; }
+    .stat-number { --count: 0; font-size: 0; counter-reset: token var(--count); }
+    .stat-number::before { content: counter(token); color: var(--ink); font-size: clamp(18px, 5.8vw, 52px); }
+    @media (prefers-reduced-motion: no-preference) { .stat-number { animation: count-up 1s .12s var(--ease) both; } .stat-card::after { animation: token-ripple .85s .64s var(--ease) both; } .stat-card:nth-child(2)::after { animation-delay: .72s; } .stat-card:nth-child(3)::after { animation-delay: .8s; } @keyframes count-up { to { --count: var(--target); } } @keyframes token-ripple { 0% { opacity: .58; transform: translateX(-50%) scale(.45); } 100% { opacity: 0; transform: translateX(-50%) scale(4.2); } } }
+
+    footer { border-top: 1px solid var(--line); background: var(--warm); }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; padding-block: 27px; color: var(--muted); font-size: 13px; }
+    .footer-inner img { width: auto; height: 30px; }
+
+    @media (min-width: 720px) { .nav-inner { min-height: 76px; } .nav-links { display: flex; } .support-panel { padding-block: 42px; } .wish-cta { min-height: 180px; padding: 34px; } }
+    @media (min-width: 1024px) { .container { padding-inline: 40px; } .hero-grid { grid-template-columns: 1.12fr .88fr; align-items: center; } .hero-art { min-height: 310px; } .api-journey { --pulse-mid: 160px; --pulse-end: 340px; min-height: 230px; padding: 28px 24px 18px; } .section { padding-block: 88px; } .impact { padding-top: 25px; } .support-panel { grid-template-columns: 1fr auto; align-items: center; } .stat-card { padding-inline: 20px; } }
+    @media (prefers-reduced-motion: no-preference) {
+      .hero-content { animation: rise .7s var(--ease) both; } .hero-art { animation: rise .8s .12s var(--ease) both; } .route-pulse { animation: request-travel 4.2s 1.1s var(--ease) infinite; } .response-dot { animation: response-glow 4.2s 2.5s var(--ease) infinite; }
+      .stat-card { animation: rise .6s var(--ease) both; } .stat-card:nth-child(2) { animation-delay: .08s; } .stat-card:nth-child(3) { animation-delay: .16s; }
+      @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes request-travel { 0%, 10% { transform: translate(0, 0); opacity: 0; } 18% { opacity: 1; } 38% { transform: translate(var(--pulse-mid), -44px); } 60% { transform: translate(var(--pulse-end), 3px); opacity: 1; } 70%, 100% { transform: translate(var(--pulse-end), 3px); opacity: 0; } }
+      @keyframes response-glow { 0%, 58% { transform: scale(.72); opacity: .5; } 67% { transform: scale(1.35); opacity: 1; } 78%, 100% { transform: scale(1); opacity: 1; } }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } .stat-number { --count: var(--target); } }
+  </style>
+</head>
+<body>
+  <header class="site-nav">
+    <div class="container nav-inner">
+      <a class="nav-brand" href="https://flowbee.top/" aria-label="返回 FlowBee 首页"><span class="nav-mark" aria-hidden="true">F</span><span>FlowBee</span></a>
+      <nav class="nav-links" aria-label="主导航"><a class="nav-link" href="https://docs.flowbee.top/">使用文档</a><a class="nav-link" href="https://flowbee.top/console">控制台</a><a class="nav-link" href="#wish-title">愿望清单</a></nav>
+      <a class="button button-primary nav-login" href="https://flowbee.top/sign-in">登录</a>
+    </div>
+  </header>
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <p class="eyebrow">FlowBee</p>
+          <h1 id="hero-title">贴心服务，温暖接入</h1>
+          <p class="hero-copy">一个只给熟人圈用的小服务。模型全部公开可测，也会持续听见每一个建议。</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="https://flowbee.top/sign-in">登录 FlowBee</a>
+            <a class="button button-secondary" href="https://docs.flowbee.top">使用文档 <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+        <div class="hero-art" role="img" aria-label="FlowBee API 请求旅程：POST 请求经由 chat 接口获得 200 OK 响应">
+          <div class="api-journey">
+            <p class="journey-meta">FlowBee API endpoint</p>
+            <p class="journey-url"><span>https://</span>flowbee.top<span>/v1</span></p>
+            <div class="journey-route" aria-hidden="true">
+              <svg class="route-line" viewBox="0 0 420 78" preserveAspectRatio="none"><path d="M15 58 C105 58, 123 19, 202 19 S305 60, 406 60" /></svg>
+              <span class="route-stop route-start">POST</span>
+              <span class="route-stop route-middle">/chat/completions</span>
+              <span class="route-stop route-end">200 OK</span>
+              <span class="route-pulse"></span>
+            </div>
+            <p class="journey-response"><span class="response-dot" aria-hidden="true"></span>模型请求，被 FlowBee 温柔接住</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 手动修改下方每个数字：style 中的 --target 不要带逗号，标签文字可带逗号便于读屏。 -->
+    <section class="section impact" aria-labelledby="impact-title">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">共同撑起 FlowBee</p>
+          <h2 id="impact-title">每一份额度，都在被认真用好</h2>
+          <p>免费额度用完后，站点仍会继续拿出补贴额度，让大家可以用更低的成本继续体验。</p>
+        </div>
+        <div class="stats" aria-live="polite">
+          <article class="stat-card"><p class="stat-label">免费提供</p><strong class="stat-number" style="--target: 0">0</strong><span class="stat-unit">Tokens</span></article>
+          <article class="stat-card"><p class="stat-label">本站补贴</p><strong class="stat-number" style="--target: 0">0</strong><span class="stat-unit">Tokens</span></article>
+          <article class="stat-card"><p class="stat-label">邀请赠送</p><strong class="stat-number" style="--target: 0">0</strong><span class="stat-unit">Tokens</span></article>
+        </div>
+        <p class="stats-status">数据会定期更新，以账户实际到账额度为准。</p>
+      </div>
+    </section>
+
+    <!-- 广告额度接入后，取消下面整个区块的注释即可启用。
+    <section class="section support" aria-labelledby="support-title">
+      <div class="container">
+        <div class="support-panel">
+          <div><p class="eyebrow">额度补给</p><h2 id="support-title">免费额度用完，也有补贴继续陪你用</h2><p>看一段广告即可获得额外额度；这份收益会回到站点，用来补贴模型调用成本。</p></div>
+          这里替换为看广告页、任务中心或钱包页面的真实链接。
+          <div class="support-actions"><a class="button button-primary" href="/wallet/tasks" aria-label="前往任务中心，看广告获取额度">看广告获取额度 <span aria-hidden="true">→</span></a><span class="support-hint">广告入口开放后，额度到账规则会在任务页说明。</span></div>
+        </div>
+      </div>
+    </section>
+    -->
+
+    <section class="section wishes" aria-labelledby="wish-title">
+      <div class="container">
+        <div class="section-heading"><p class="eyebrow">Wish List</p><h2 id="wish-title">你希望 FlowBee 接下来实现什么？</h2><p>想要的模型、功能和体验，都可以留下。高频愿望会优先进入规划。</p></div>
+        <div class="wish-board">
+          <div class="wish-marquee" aria-label="社区愿望墙" aria-live="off">
+            <!-- 直接增删或修改下面的 span，即可人工维护愿望内容。每行重复一遍用于无缝循环。 -->
+            <div class="wish-track">
+              <span class="wish">想试试更多推理模型</span><span class="wish">希望能导出聊天记录</span><span class="wish">加一个模型横向对比</span><span class="wish">图片理解也想体验</span>
+              <span class="wish">想试试更多推理模型</span><span class="wish">希望能导出聊天记录</span><span class="wish">加一个模型横向对比</span><span class="wish">图片理解也想体验</span>
+            </div>
+            <div class="wish-track wish-track--reverse">
+              <span class="wish">想要更清楚的消费明细</span><span class="wish">期待 Claude 新模型</span><span class="wish">希望有常用提示词收藏</span><span class="wish">可以做一次分享奖励吗？</span>
+              <span class="wish">想要更清楚的消费明细</span><span class="wish">期待 Claude 新模型</span><span class="wish">希望有常用提示词收藏</span><span class="wish">可以做一次分享奖励吗？</span>
+            </div>
+          </div>
+          <!-- 这里替换为许愿页面、问卷或社群收集入口的真实链接。 -->
+          <a class="wish-cta" href="https://flowbee.top/wishes" aria-label="前往愿望清单，提交建议"><span><p class="eyebrow">MAKE A WISH</p><h3>去许个愿</h3><p>你的下一句想法，可能就是下一项更新。</p></span><span class="send" aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer><div class="container footer-inner"><img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEYyeFqdl3iafKeZm7Li2b7ifMBITS33gACWS4AAvmbsFe4y59XKn2RXD0E.png" alt="FlowBee"><p>仅供亲朋好友以及粉丝使用，不对外公开盈利 · © 2026 FlowBee</p></div></footer>
+</body>
+</html>
