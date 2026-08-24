@@ -1,16 +1,25 @@
 (function () {
   'use strict';
 
-  // NewAPI's header brand link is the only home link with this accessible name.
-  // Do not match the ordinary navigation item whose visible text is "主页".
-  var brandLinkSelector = 'a[aria-label="返回主页"][href="/"]';
+  // NewAPI uses two different header structures. Both checks require the
+  // logo-and-FlowBee brand treatment; ordinary "主页" links do not qualify.
+  var appBrandSelector = 'a[aria-label="返回主页"][href="/"]';
+
+  function isBrandLink(link) {
+    if (!link || link.tagName !== 'A') return false;
+    if (link.matches(appBrandSelector)) return true;
+    if (link.getAttribute('href') !== '/' || link.textContent.trim() !== 'FlowBee') {
+      return false;
+    }
+    return Boolean(link.querySelector(':scope > div > img[alt="logo"]'));
+  }
 
   document.addEventListener(
     'click',
     function (event) {
       var target = event.target;
-      var link = target && target.closest && target.closest(brandLinkSelector);
-      if (!link || !document.documentElement.contains(link)) return;
+      var link = target && target.closest && target.closest('a[href="/"]');
+      if (!isBrandLink(link) || !document.documentElement.contains(link)) return;
 
       event.preventDefault();
       event.stopImmediatePropagation();
