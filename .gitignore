@@ -1,0 +1,10 @@
+# Secrets: contains the GitHub deploy PRIVATE key. NEVER commit this.
+.secrets/
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.swp
+
+# Local project memory (not part of the site)
+.workbuddy/

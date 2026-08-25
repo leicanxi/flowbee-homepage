@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#faf8f2">
   <title>FlowBee · 贴心服务，温暖接入</title>
+  <link rel="icon" href="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEZxkFqjFfnBZM5o9Nv97y2PmMZr3TC9AAC_TMAAg-uYVRsP0CpUPcQPj0E.png">
   <style>
     :host, :root {
       color-scheme: light;
@@ -33,7 +34,7 @@
     .site-nav { position: absolute; z-index: 10; top: 0; left: 0; right: 0; }
     .nav-inner { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
     .nav-brand { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); font-size: 17px; font-weight: 850; letter-spacing: -.04em; text-decoration: none; }
-    .nav-mark { width: 22px; aspect-ratio: 1 / .92; display: grid; place-items: center; clip-path: polygon(25% 5%,75% 5%,100% 50%,75% 95%,25% 95%,0 50%); background: linear-gradient(180deg, oklch(.86 .12 92), var(--accent)); color: var(--accent-ink); font-size: 12px; }
+    .nav-mark-img { width: 27px; height: 27px; border-radius: 7px; object-fit: contain; }
     .nav-links { display: none; align-items: center; gap: 24px; margin-left: auto; }
     .nav-link { position: relative; color: var(--muted); font-size: 14px; font-weight: 700; text-decoration: none; }
     .nav-link::after { content: ""; position: absolute; left: 0; right: 0; bottom: -5px; height: 1.5px; background: var(--accent-deep); border-radius: 9px; transform: scaleX(0); transition: transform .22s var(--ease); }
@@ -47,8 +48,8 @@
     .hero-copy { max-width: 34ch; margin-top: 20px; color: var(--muted); font-size: clamp(16px, 2vw, 20px); font-weight: 600; }
     .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 27px; }
     .hero-art { display: grid; place-items: center; position: relative; min-height: 202px; }
-    .api-journey { --pulse-mid: 132px; --pulse-end: 276px; position: relative; width: min(100%, 440px); min-height: 194px; padding: 24px 18px 14px; overflow: hidden; }
-    .api-journey::before { content: ""; position: absolute; inset: 8px -10px 0; background: radial-gradient(55% 70% at 54% 70%, oklch(.9 .08 90 / .72), transparent 72%); pointer-events: none; }
+    .api-journey { --pulse-mid: 132px; --pulse-end: 276px; position: relative; width: min(100%, 440px); min-height: 194px; padding: 24px 18px 22px; overflow: visible; }
+    .api-journey::before { content: ""; position: absolute; inset: -28px -34px -42px; background: radial-gradient(58% 66% at 54% 56%, oklch(.97 .06 92 / .92), oklch(.93 .075 90 / .5) 50%, transparent 80%); filter: blur(8px); pointer-events: none; z-index: 0; }
     .journey-meta, .journey-url, .journey-response, .journey-route { position: relative; z-index: 1; }
     .journey-meta { color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
     .journey-url { margin-top: 7px; font-size: clamp(20px, 5.5vw, 29px); font-weight: 800; letter-spacing: -.05em; white-space: nowrap; }
@@ -101,14 +102,17 @@
     .wish-cta .send { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--accent-ink); color: #fff; font-size: 22px; transition: transform .2s var(--ease); }
     .wish-cta:hover .send { transform: translate(3px, -3px) rotate(-12deg); }
     @keyframes drift { to { transform: translateX(-50%); } }
-    @property --count { syntax: '<integer>'; initial-value: 0; inherits: false; }
-    .stat-number { --count: 0; font-size: 0; counter-reset: token var(--count); }
-    .stat-number::before { content: counter(token); color: var(--ink); font-size: clamp(18px, 5.8vw, 52px); }
-    @media (prefers-reduced-motion: no-preference) { .stat-number { animation: count-up 1s .12s var(--ease) both; } .stat-card::after { animation: token-ripple .85s .64s var(--ease) both; } .stat-card:nth-child(2)::after { animation-delay: .72s; } .stat-card:nth-child(3)::after { animation-delay: .8s; } @keyframes count-up { to { --count: var(--target); } } @keyframes token-ripple { 0% { opacity: .58; transform: translateX(-50%) scale(.45); } 100% { opacity: 0; transform: translateX(-50%) scale(4.2); } } }
+    /* 数字由页尾内联脚本按各 .stat-number 的 data-target 动画，并用 toLocaleString 加千位分隔符渲染。 */
+    @media (prefers-reduced-motion: no-preference) { .stat-card::after { animation: token-ripple .85s .64s var(--ease) both; } .stat-card:nth-child(2)::after { animation-delay: .72s; } .stat-card:nth-child(3)::after { animation-delay: .8s; } @keyframes token-ripple { 0% { opacity: .58; transform: translateX(-50%) scale(.45); } 100% { opacity: 0; transform: translateX(-50%) scale(4.2); } } }
 
     footer { border-top: 1px solid var(--line); background: var(--warm); }
-    .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; padding-block: 27px; color: var(--muted); font-size: 13px; }
-    .footer-inner img { width: auto; height: 30px; }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px 32px; padding-block: 34px; color: var(--muted); font-size: 13px; }
+    .footer-brand { display: flex; align-items: center; gap: 12px; }
+    .footer-brand img { width: auto; height: 30px; }
+    .footer-brand p { margin: 0; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 10px 22px; }
+    .footer-links a { color: var(--muted); font-weight: 700; text-decoration: none; transition: color .2s var(--ease); }
+    .footer-links a:hover { color: var(--accent-deep); }
 
     @media (min-width: 720px) { .nav-inner { min-height: 76px; } .nav-links { display: flex; } .support-panel { padding-block: 42px; } .wish-cta { min-height: 180px; padding: 34px; } }
     @media (min-width: 1024px) { .container { padding-inline: 40px; } .hero-grid { grid-template-columns: 1.12fr .88fr; align-items: center; } .hero-art { min-height: 310px; } .api-journey { --pulse-mid: 160px; --pulse-end: 340px; min-height: 230px; padding: 28px 24px 18px; } .section { padding-block: 88px; } .impact { padding-top: 25px; } .support-panel { grid-template-columns: 1fr auto; align-items: center; } .stat-card { padding-inline: 20px; } }
@@ -119,14 +123,14 @@
       @keyframes request-travel { 0%, 10% { transform: translate(0, 0); opacity: 0; } 18% { opacity: 1; } 38% { transform: translate(var(--pulse-mid), -44px); } 60% { transform: translate(var(--pulse-end), 3px); opacity: 1; } 70%, 100% { transform: translate(var(--pulse-end), 3px); opacity: 0; } }
       @keyframes response-glow { 0%, 58% { transform: scale(.72); opacity: .5; } 67% { transform: scale(1.35); opacity: 1; } 78%, 100% { transform: scale(1); opacity: 1; } }
     }
-    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } .stat-number { --count: var(--target); } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
   </style>
 </head>
 <body>
   <header class="site-nav">
     <div class="container nav-inner">
-      <a class="nav-brand" href="https://flowbee.top/" aria-label="返回 FlowBee 首页"><span class="nav-mark" aria-hidden="true">F</span><span>FlowBee</span></a>
-      <nav class="nav-links" aria-label="主导航"><a class="nav-link" href="https://docs.flowbee.top/">使用文档</a><a class="nav-link" href="https://flowbee.top/console">控制台</a><a class="nav-link" href="#wish-title">愿望清单</a></nav>
+      <a class="nav-brand" href="https://flowbee.top/" aria-label="返回 FlowBee 首页"><img class="nav-mark-img" src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEZxkFqjFfnBZM5o9Nv97y2PmMZr3TC9AAC_TMAAg-uYVRsP0CpUPcQPj0E.png" alt="FlowBee"><span>FlowBee</span></a>
+      <nav class="nav-links" aria-label="主导航"><a class="nav-link" href="https://docs.flowbee.top/">使用文档</a><a class="nav-link" href="https://flowbee.top/dashboard">控制台</a><a class="nav-link" href="#wish-title">愿望清单</a></nav>
       <a class="button button-primary nav-login" href="https://flowbee.top/sign-in">登录</a>
     </div>
   </header>
@@ -159,18 +163,18 @@
       </div>
     </section>
 
-    <!-- 手动修改下方每个数字：style 中的 --target 不要带逗号，标签文字可带逗号便于读屏。 -->
+    <!-- 手动修改下方每个数字：改各 <strong class="stat-number"> 的 data-target（纯整数，不带逗号）；单位在对应 <span class="stat-unit"> 内改。页尾脚本负责动画与千位分隔。 -->
     <section class="section impact" aria-labelledby="impact-title">
       <div class="container">
         <div class="section-heading">
           <p class="eyebrow">共同撑起 FlowBee</p>
-          <h2 id="impact-title">每一份额度，都在被认真用好</h2>
+          <h2 id="impact-title">免费调用，flowbee专属补贴</h2>
           <p>免费额度用完后，站点仍会继续拿出补贴额度，让大家可以用更低的成本继续体验。</p>
         </div>
         <div class="stats" aria-live="polite">
-          <article class="stat-card"><p class="stat-label">免费提供</p><strong class="stat-number" style="--target: 0">0</strong><span class="stat-unit">Tokens</span></article>
-          <article class="stat-card"><p class="stat-label">本站补贴</p><strong class="stat-number" style="--target: 0">0</strong><span class="stat-unit">Tokens</span></article>
-          <article class="stat-card"><p class="stat-label">邀请赠送</p><strong class="stat-number" style="--target: 0">0</strong><span class="stat-unit">Tokens</span></article>
+          <article class="stat-card"><p class="stat-label">免费提供</p><strong class="stat-number" data-target="96000000">0</strong><span class="stat-unit">Tokens</span></article>
+          <article class="stat-card"><p class="stat-label">本站补贴</p><strong class="stat-number" data-target="120000000">0</strong><span class="stat-unit">Tokens</span></article>
+          <article class="stat-card"><p class="stat-label">邀请赠送</p><strong class="stat-number" data-target="236">0</strong><span class="stat-unit">元</span></article>
         </div>
         <p class="stats-status">数据会定期更新，以账户实际到账额度为准。</p>
       </div>
@@ -195,20 +199,51 @@
           <div class="wish-marquee" aria-label="社区愿望墙" aria-live="off">
             <!-- 直接增删或修改下面的 span，即可人工维护愿望内容。每行重复一遍用于无缝循环。 -->
             <div class="wish-track">
-              <span class="wish">想试试更多推理模型</span><span class="wish">希望能导出聊天记录</span><span class="wish">加一个模型横向对比</span><span class="wish">图片理解也想体验</span>
-              <span class="wish">想试试更多推理模型</span><span class="wish">希望能导出聊天记录</span><span class="wish">加一个模型横向对比</span><span class="wish">图片理解也想体验</span>
+              <span class="wish">想试试更多推理模型</span><span class="wish">希望能更新接入酒馆教程</span><span class="wish">加一个模型横向对比</span><span class="wish">能在群里发红包吗</span>
+              <span class="wish">想试试更多推理模型</span><span class="wish">希望能更新接入酒馆教程</span><span class="wish">加一个模型横向对比</span><span class="wish">能在群里发红包吗</span>
             </div>
             <div class="wish-track wish-track--reverse">
-              <span class="wish">想要更清楚的消费明细</span><span class="wish">期待 Claude 新模型</span><span class="wish">希望有常用提示词收藏</span><span class="wish">可以做一次分享奖励吗？</span>
-              <span class="wish">想要更清楚的消费明细</span><span class="wish">期待 Claude 新模型</span><span class="wish">希望有常用提示词收藏</span><span class="wish">可以做一次分享奖励吗？</span>
+              <span class="wish">想要更清楚的消费明细</span><span class="wish">期待 Claude 新模型</span><span class="wish">希望增加更多人设卡</span><span class="wish">可以做一次分享奖励吗？</span>
+              <span class="wish">想要更清楚的消费明细</span><span class="wish">期待 Claude 新模型</span><span class="wish">希望增加更多人设卡</span><span class="wish">可以做一次分享奖励吗？</span>
             </div>
           </div>
           <!-- 这里替换为许愿页面、问卷或社群收集入口的真实链接。 -->
-          <a class="wish-cta" href="https://flowbee.top/wishes" aria-label="前往愿望清单，提交建议"><span><p class="eyebrow">MAKE A WISH</p><h3>去许个愿</h3><p>你的下一句想法，可能就是下一项更新。</p></span><span class="send" aria-hidden="true">↗</span></a>
+          <a class="wish-cta" href="https://wish.flowbee.top" aria-label="前往愿望清单，提交建议"><span><p class="eyebrow">MAKE A WISH</p><h3>去许个愿</h3><p>你的下一句想法，可能就是下一项更新。</p></span><span class="send" aria-hidden="true">↗</span></a>
         </div>
       </div>
     </section>
   </main>
-  <footer><div class="container footer-inner"><img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEYyeFqdl3iafKeZm7Li2b7ifMBITS33gACWS4AAvmbsFe4y59XKn2RXD0E.png" alt="FlowBee"><p>仅供亲朋好友以及粉丝使用，不对外公开盈利 · © 2026 FlowBee</p></div></footer>
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEZxkFqjFfnBZM5o9Nv97y2PmMZr3TC9AAC_TMAAg-uYVRsP0CpUPcQPj0E.png" alt="FlowBee">
+        <p>仅供亲朋好友以及粉丝使用，不对外公开盈利 · © 2026 FlowBee</p>
+      </div>
+      <nav class="footer-links" aria-label="子站导航">
+        <a href="https://flowbee.top/pricing">模型广场</a>
+        <a href="https://flowbee.top/dashboard">控制面板</a>
+        <a href="https://docs.flowbee.top/">参考文档</a>
+        <a href="https://wish.flowbee.top">愿望广场</a>
+      </nav>
+    </div>
+  </footer>
+  <script>
+    (function () {
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.querySelectorAll('.stat-number').forEach(function (el) {
+        var target = parseInt(el.getAttribute('data-target'), 10) || 0;
+        if (reduce) { el.textContent = target.toLocaleString('zh-CN'); return; }
+        var dur = 1100, start = null;
+        function step(ts) {
+          if (start === null) start = ts;
+          var p = Math.min((ts - start) / dur, 1);
+          var eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.round(target * eased).toLocaleString('zh-CN');
+          if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      });
+    })();
+  </script>
 </body>
 </html>
