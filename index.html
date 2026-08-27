@@ -130,7 +130,7 @@
   <header class="site-nav">
     <div class="container nav-inner">
       <a class="nav-brand" href="https://flowbee.top/" aria-label="返回 FlowBee 首页"><img class="nav-mark-img" src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEZxkFqjFfnBZM5o9Nv97y2PmMZr3TC9AAC_TMAAg-uYVRsP0CpUPcQPj0E.png" alt="FlowBee"><span>FlowBee</span></a>
-      <nav class="nav-links" aria-label="主导航"><a class="nav-link" href="https://docs.flowbee.top/">使用文档</a><a class="nav-link" href="https://flowbee.top/dashboard">控制台</a><a class="nav-link" href="#wish-title">愿望清单</a></nav>
+      <nav class="nav-links" aria-label="主导航"><a class="nav-link" href="https://docs.flowbee.top/">连接教程</a><a class="nav-link" href="https://flowbee.top/dashboard">控制台</a><a class="nav-link" href="https://flowbee.top/contact">1对1 指导</a><a class="nav-link" href="#wish-title">愿望清单</a></nav>
       <a class="button button-primary nav-login" href="https://flowbee.top/sign-in">登录</a>
     </div>
   </header>
@@ -143,7 +143,7 @@
           <p class="hero-copy">一个只给熟人圈用的小服务。模型全部公开可测，也会持续听见每一个建议。</p>
           <div class="hero-actions">
             <a class="button button-primary" href="https://flowbee.top/sign-in">登录 FlowBee</a>
-            <a class="button button-secondary" href="https://docs.flowbee.top">使用文档 <span aria-hidden="true">→</span></a>
+            <a class="button button-secondary" href="https://docs.flowbee.top">连接教程 <span aria-hidden="true">→</span></a>
           </div>
         </div>
         <div class="hero-art" role="img" aria-label="FlowBee API 请求旅程：POST 请求经由 chat 接口获得 200 OK 响应">
@@ -208,7 +208,7 @@
             </div>
           </div>
           <!-- 这里替换为许愿页面、问卷或社群收集入口的真实链接。 -->
-          <a class="wish-cta" href="https://wish.flowbee.top" aria-label="前往愿望清单，提交建议"><span><p class="eyebrow">MAKE A WISH</p><h3>去许个愿</h3><p>你的下一句想法，可能就是下一项更新。</p></span><span class="send" aria-hidden="true">↗</span></a>
+          <a class="wish-cta" href="https://post.flowbee.top" aria-label="前往愿望清单，提交建议"><span><p class="eyebrow">MAKE A WISH</p><h3>去许个愿</h3><p>你的下一句想法，可能就是下一项更新。</p></span><span class="send" aria-hidden="true">↗</span></a>
         </div>
       </div>
     </section>
@@ -223,17 +223,18 @@
         <a href="https://flowbee.top/pricing">模型广场</a>
         <a href="https://flowbee.top/dashboard">控制面板</a>
         <a href="https://docs.flowbee.top/">参考文档</a>
-        <a href="https://wish.flowbee.top">愿望广场</a>
+        <a href="https://post.flowbee.top">愿望广场</a>
+        <a href="https://flowbee.top/contact">1对1 指导</a>
       </nav>
     </div>
   </footer>
   <script>
     (function () {
       var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      document.querySelectorAll('.stat-number').forEach(function (el) {
+      function run(el) {
         var target = parseInt(el.getAttribute('data-target'), 10) || 0;
         if (reduce) { el.textContent = target.toLocaleString('zh-CN'); return; }
-        var dur = 1100, start = null;
+        var dur = 1300, start = null;
         function step(ts) {
           if (start === null) start = ts;
           var p = Math.min((ts - start) / dur, 1);
@@ -242,7 +243,19 @@
           if (p < 1) requestAnimationFrame(step);
         }
         requestAnimationFrame(step);
-      });
+      }
+      var nums = document.querySelectorAll('.stat-number');
+      // 进入视口才触发数字动画，避免首屏加载就把动画播完（滑到时已经结束）。
+      if (reduce || !('IntersectionObserver' in window)) {
+        nums.forEach(run);
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { run(e.target); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.5 });
+      nums.forEach(function (n) { io.observe(n); });
     })();
   </script>
 </body>
