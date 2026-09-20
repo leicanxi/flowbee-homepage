@@ -101,6 +101,111 @@
     .wish-cta .send { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--accent-ink); color: #fff; font-size: 22px; transition: transform .2s var(--ease); }
     .wish-cta:hover .send { transform: translate(3px, -3px) rotate(-12deg); }
     @keyframes drift { to { transform: translateX(-50%); } }
+
+    /* ===== 支持者气泡墙 =====
+       数据来自站内公开接口 /api/sponsors（同源，见页尾脚本）。气泡的圆角、
+       底色、称号配色与头像取色都沿用了站内 /sponsors 页那套，所以同一个人
+       在首页和站内是同一个颜色 —— 两边对不上会显得像两个站。
+       形状是长条而不是方块：宽度由内容决定、高度只由行数决定，寄语长短不同
+       气泡就长一截或短一截，但始终是薄薄一条。 */
+    .backers { padding-top: 8px; }
+    .bubble-wall { display: flex; flex-direction: column; gap: 10px; }
+    .bubble-row {
+      overflow: hidden;
+      padding-block: 6px;
+      mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+    }
+    /* 轨道里放两份完全相同的内容，位移正好是一份的宽度（-50%），接缝处才看不出跳。
+       每份自带右侧内边距，把行间距算进自身宽度里，否则 -50% 会少走半个间距。 */
+    .bubble-track {
+      display: flex;
+      width: max-content;
+      will-change: transform;
+      animation: bubble-drift var(--dur, 46s) linear infinite;
+    }
+    .bubble-group {
+      display: flex;
+      flex: none;
+      align-items: center;
+      gap: var(--gap, 18px);
+      padding-right: var(--gap, 18px);
+    }
+    @keyframes bubble-drift {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+    /* 悬停与键盘聚焦暂停：气泡里是名字和寄语，一直在动的目标读不了。 */
+    .bubble-wall:hover .bubble-track,
+    .bubble-wall:focus-within .bubble-track { animation-play-state: paused; }
+
+    .bubble {
+      display: flex;
+      flex: none;
+      align-items: center;
+      gap: 10px;
+      min-width: 150px;
+      max-width: 290px;
+      padding: 8px 14px;
+      border: 1px solid oklch(.9 .02 88);
+      /* 页面底色本身就是暖白，纯 #faf9f5 会糊在背景里，所以配一道描边和浅阴影托出边界。 */
+      background: #faf9f5;
+      border-radius: 22px;
+      box-shadow: 0 3px 10px oklch(.42 .04 80 / .06);
+    }
+    .bubble-avatar {
+      display: grid;
+      flex: none;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .bubble-body { min-width: 0; }
+    .bubble-head { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; }
+    .bubble-name {
+      overflow: hidden;
+      color: #2f2b26;
+      font-size: 13px;
+      font-weight: 750;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .bubble-badge {
+      flex: none;
+      padding-inline: 6px;
+      border: 1px solid;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 16px;
+      white-space: nowrap;
+    }
+    .bubble-badge--early { border-color: #e8d6b2; background: #f5e9d2; color: #8a6524; }
+    .bubble-badge--ongoing { border-color: #cde1d2; background: #e3efe5; color: #3d6748; }
+    .bubble-msg {
+      display: -webkit-box;
+      overflow: hidden;
+      margin-top: 2px;
+      color: #7d7568;
+      font-size: 11px;
+      line-height: 16px;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+    /* 名单为空时只留入口，不留一个空壳墙。 */
+    .bubble-wall[hidden] { display: none; }
+    .backers-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
+      margin-top: 26px;
+    }
+    .backers-hint { max-width: 34ch; color: var(--muted); font-size: 13px; }
+
     /* 数字由页尾内联脚本按各 .stat-number 的 data-target 动画，并用 toLocaleString 加千位分隔符渲染。 */
     @media (prefers-reduced-motion: no-preference) { .stat-card::after { animation: token-ripple .85s .64s var(--ease) both; } @keyframes token-ripple { 0% { opacity: .58; transform: translateX(-50%) scale(.45); } 100% { opacity: 0; transform: translateX(-50%) scale(4.2); } } }
 
@@ -176,6 +281,25 @@
           <article class="stat-card"><p class="stat-label">免费提供</p><strong class="stat-number" id="free-tokens" data-target="5303716617">0</strong><span class="stat-unit">Tokens</span></article>
         </div>
         <p class="stats-status">数字取自站内实际用量统计，会随大家的每一笔调用持续累加。</p>
+      </div>
+    </section>
+
+    <!-- 支持者区块：名单由页尾脚本从站内 /api/sponsors 拉取（同源，无需跨域配置）。
+         默认隐藏，只有接口确认活动已开启时才显示：活动没开的时候留着一块
+         "来支持我们"反而把人引到一个关着门的页面。
+         名单独取不到时会保持隐藏，首页不显示空壳也不显示报错。 -->
+    <section class="section backers" id="backers" hidden aria-labelledby="backers-title">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Backers</p>
+          <h2 id="backers-title">被一群希望它继续开下去的人撑着</h2>
+          <p>FlowBee 之所以能实现免费和补贴调用，光靠站长是不够的，还有一些人在悄悄支持我们。每一份支持我们都同等感谢，不按金额排先后。</p>
+        </div>
+        <div class="bubble-wall" id="bubble-wall" hidden></div>
+        <div class="backers-actions">
+          <a class="button button-primary" href="https://flowbee.top/sponsors">我也要支持 <span aria-hidden="true">→</span></a>
+          <span class="backers-hint">支持页上能看到完整名单，以及每个人留下的话。</span>
+        </div>
       </div>
     </section>
 
@@ -283,6 +407,147 @@
         })
         .catch(function () {
           /* 保持兜底值即可，这里没有别的降级动作。 */
+        });
+    })();
+  </script>
+  <script>
+    /* 支持者气泡墙。
+       名单取站内公开接口 /api/sponsors —— 首页与接口同源（都由 brand-nginx 发出去），
+       所以不需要任何跨域配置，也不需要每次有人支持就回来手改这份 HTML。
+       三种情况各有降级：接口拿不到 / 活动未开启 → 整块保持隐藏；
+       活动开着但还没有人支持 → 只留入口，不留一面空墙。
+       头像用站内同一套哈希取色，同一个人在首页与 /sponsors 页是同一个颜色。 */
+    (function () {
+      var section = document.getElementById('backers');
+      var wall = document.getElementById('bubble-wall');
+      if (!section || !wall) return;
+
+      /* 三行的滚动参数。时长决定速度、间距决定密度，两者错开之后三行不会同步，
+         看起来才像弹幕，而不是三条并排的传送带。 */
+      var ROWS = [
+        { dur: 46, gap: 18, offsets: [-4, 2, -1, 4, -5, 1] },
+        { dur: 62, gap: 24, offsets: [3, -3, 4, -2, 2, -4] },
+        { dur: 40, gap: 14, offsets: [-2, 4, -4, 1, -3, 3] }
+      ];
+      /* 一行最少几个气泡：太少撑不满轨道，接缝处会露出空白。 */
+      var MIN_PER_ROW = 4;
+      var BADGES = {
+        early_supporter: { label: '早期支持者', cls: 'bubble-badge--early' },
+        continuous_supporter: { label: '持续支持者', cls: 'bubble-badge--ongoing' }
+      };
+
+      /* 与站内 web/src/lib/avatar.ts 完全一致，改一边就要改另一边。 */
+      function avatarBackground(name) {
+        var hash = 0;
+        for (var i = 0; i < name.length; i++) {
+          hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
+        }
+        return 'hsl(' + (hash % 360) + ' ' + (54 + (hash % 8)) + '% ' +
+          (52 + ((hash >> 4) % 8)) + '%)';
+      }
+
+      function el(tag, className) {
+        var node = document.createElement(tag);
+        if (className) node.className = className;
+        return node;
+      }
+
+      function makeBubble(sponsor, offset) {
+        var bubble = el('div', 'bubble');
+        bubble.style.transform = 'translateY(' + offset + 'px)';
+
+        var avatar = el('div', 'bubble-avatar');
+        if (sponsor.anonymous) {
+          avatar.style.background = '#ece5d8';
+          avatar.style.color = '#8b8070';
+          avatar.textContent = '♥';
+        } else {
+          avatar.style.background = avatarBackground(sponsor.name);
+          avatar.textContent = (sponsor.name.trim().charAt(0) || '?').toUpperCase();
+        }
+
+        var body = el('div', 'bubble-body');
+        var head = el('div', 'bubble-head');
+        var name = el('span', 'bubble-name');
+        name.textContent = sponsor.anonymous ? '匿名支持者' : sponsor.name;
+        head.appendChild(name);
+        (sponsor.badges || []).forEach(function (id) {
+          var meta = BADGES[id];
+          if (!meta) return;
+          var badge = el('span', 'bubble-badge ' + meta.cls);
+          badge.textContent = meta.label;
+          head.appendChild(badge);
+        });
+        body.appendChild(head);
+
+        if (sponsor.message) {
+          var message = el('p', 'bubble-msg');
+          /* 一律走 textContent：名单是用户产生的内容，绝不当 HTML 插入。 */
+          message.textContent = sponsor.message;
+          body.appendChild(message);
+        }
+
+        bubble.appendChild(avatar);
+        bubble.appendChild(body);
+        return bubble;
+      }
+
+      function makeRow(sponsors, preset) {
+        var row = el('div', 'bubble-row');
+        var track = el('div', 'bubble-track');
+        track.style.setProperty('--dur', preset.dur + 's');
+        track.style.setProperty('--gap', preset.gap + 'px');
+
+        /* 人数太少时把同一批人重复几遍才够长。轨道里始终是两份完全相同的内容，
+           所以 -50% 的位移依旧严丝合缝。 */
+        var items = [];
+        for (var r = 0; r < Math.max(1, Math.ceil(MIN_PER_ROW / sponsors.length)); r++) {
+          items = items.concat(sponsors);
+        }
+
+        for (var copy = 0; copy < 2; copy++) {
+          var group = el('div', 'bubble-group');
+          /* 第二份是接缝用的副本，对读屏软件是装饰，标掉避免名字被念两遍。 */
+          if (copy === 1) group.setAttribute('aria-hidden', 'true');
+          items.forEach(function (sponsor, index) {
+            group.appendChild(makeBubble(sponsor, preset.offsets[index % preset.offsets.length]));
+          });
+          track.appendChild(group);
+        }
+
+        row.appendChild(track);
+        return row;
+      }
+
+      fetch('/api/sponsors', { headers: { Accept: 'application/json' } })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (payload) {
+          var data = payload && payload.data;
+          if (!data || !data.enabled) return;
+
+          /* 活动开着就先把区块露出来：即使还没有人支持，入口本身也该可见。 */
+          section.hidden = false;
+          var sponsors = data.sponsors || [];
+          if (sponsors.length === 0) return;
+
+          /* 人少时少用一行。硬撑三行的话每行只有两三个人，得重复好几遍，
+             屏幕上会明明白白看到"张三、李四、张三、李四"——不像热闹，像出错。 */
+          var rowCount = Math.max(
+            1,
+            Math.min(ROWS.length, Math.floor(sponsors.length / MIN_PER_ROW))
+          );
+          var rows = [];
+          for (var i = 0; i < rowCount; i++) rows.push([]);
+          sponsors.forEach(function (sponsor, index) {
+            rows[index % rowCount].push(sponsor);
+          });
+          rows.forEach(function (row, index) {
+            if (row.length > 0) wall.appendChild(makeRow(row, ROWS[index]));
+          });
+          wall.hidden = false;
+        })
+        .catch(function () {
+          /* 拿不到就保持隐藏：首页不显示空壳，也不显示报错。 */
         });
     })();
   </script>
