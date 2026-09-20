@@ -69,9 +69,8 @@
     .section-heading p { max-width: 48ch; margin-top: 13px; color: var(--muted); }
 
     .impact { padding-top: 12px; }
-    .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding-block: 20px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .stats { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding-block: 20px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
     .stat-card { position: relative; min-width: 0; padding: 3px 10px 5px; }
-    .stat-card + .stat-card { border-left: 1px solid var(--line); }
     .stat-card::after { content: ""; position: absolute; left: 50%; top: 48px; width: 17px; height: 17px; border: 1px solid oklch(.74 .13 88 / .6); border-radius: 50%; opacity: 0; pointer-events: none; transform: translateX(-50%) scale(.45); }
     .stat-label { color: var(--muted); font-size: clamp(11px, 3.1vw, 14px); font-weight: 700; white-space: nowrap; }
     .stat-number { display: block; margin-top: 12px; font-size: clamp(18px, 5.8vw, 52px); font-variant-numeric: tabular-nums; font-weight: 800; line-height: 1; letter-spacing: -.06em; white-space: nowrap; }
@@ -103,7 +102,7 @@
     .wish-cta:hover .send { transform: translate(3px, -3px) rotate(-12deg); }
     @keyframes drift { to { transform: translateX(-50%); } }
     /* 数字由页尾内联脚本按各 .stat-number 的 data-target 动画，并用 toLocaleString 加千位分隔符渲染。 */
-    @media (prefers-reduced-motion: no-preference) { .stat-card::after { animation: token-ripple .85s .64s var(--ease) both; } .stat-card:nth-child(2)::after { animation-delay: .72s; } .stat-card:nth-child(3)::after { animation-delay: .8s; } @keyframes token-ripple { 0% { opacity: .58; transform: translateX(-50%) scale(.45); } 100% { opacity: 0; transform: translateX(-50%) scale(4.2); } } }
+    @media (prefers-reduced-motion: no-preference) { .stat-card::after { animation: token-ripple .85s .64s var(--ease) both; } @keyframes token-ripple { 0% { opacity: .58; transform: translateX(-50%) scale(.45); } 100% { opacity: 0; transform: translateX(-50%) scale(4.2); } } }
 
     footer { border-top: 1px solid var(--line); background: var(--warm); }
     .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px 32px; padding-block: 34px; color: var(--muted); font-size: 13px; }
@@ -118,7 +117,7 @@
     @media (min-width: 1024px) { .container { padding-inline: 40px; } .hero-grid { grid-template-columns: 1.12fr .88fr; align-items: center; } .hero-art { min-height: 310px; } .api-journey { --pulse-mid: 160px; --pulse-end: 340px; min-height: 230px; padding: 28px 24px 18px; } .section { padding-block: 88px; } .impact { padding-top: 25px; } .support-panel { grid-template-columns: 1fr auto; align-items: center; } .stat-card { padding-inline: 20px; } }
     @media (prefers-reduced-motion: no-preference) {
       .hero-content { animation: rise .7s var(--ease) both; } .hero-art { animation: rise .8s .12s var(--ease) both; } .route-pulse { animation: request-travel 4.2s 1.1s var(--ease) infinite; } .response-dot { animation: response-glow 4.2s 2.5s var(--ease) infinite; }
-      .stat-card { animation: rise .6s var(--ease) both; } .stat-card:nth-child(2) { animation-delay: .08s; } .stat-card:nth-child(3) { animation-delay: .16s; }
+      .stat-card { animation: rise .6s var(--ease) both; }
       @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
       @keyframes request-travel { 0%, 10% { transform: translate(0, 0); opacity: 0; } 18% { opacity: 1; } 38% { transform: translate(var(--pulse-mid), -44px); } 60% { transform: translate(var(--pulse-end), 3px); opacity: 1; } 70%, 100% { transform: translate(var(--pulse-end), 3px); opacity: 0; } }
       @keyframes response-glow { 0%, 58% { transform: scale(.72); opacity: .5; } 67% { transform: scale(1.35); opacity: 1; } 78%, 100% { transform: scale(1); opacity: 1; } }
@@ -163,7 +162,9 @@
       </div>
     </section>
 
-    <!-- 手动修改下方每个数字：改各 <strong class="stat-number"> 的 data-target（纯整数，不带逗号）；单位在对应 <span class="stat-unit"> 内改。页尾脚本负责动画与千位分隔。 -->
+    <!-- 「免费提供」的数字由页尾脚本从站内 /api/site_stats 拉取（同源，无需跨域配置）。
+         data-target 是兜底值：接口拿不到时页面显示它，所以它必须是一次真实统计的结果，
+         不是编出来的数字。改单位改下面的 <span class="stat-unit">，改兜底值改 data-target。 -->
     <section class="section impact" aria-labelledby="impact-title">
       <div class="container">
         <div class="section-heading">
@@ -172,11 +173,9 @@
           <p>免费额度用完后，站点仍会继续拿出补贴额度，让大家可以用更低的成本继续体验。</p>
         </div>
         <div class="stats" aria-live="polite">
-          <article class="stat-card"><p class="stat-label">免费提供</p><strong class="stat-number" data-target="96000000">0</strong><span class="stat-unit">Tokens</span></article>
-          <article class="stat-card"><p class="stat-label">本站补贴</p><strong class="stat-number" data-target="120000000">0</strong><span class="stat-unit">Tokens</span></article>
-          <article class="stat-card"><p class="stat-label">邀请赠送</p><strong class="stat-number" data-target="236">0</strong><span class="stat-unit">元</span></article>
+          <article class="stat-card"><p class="stat-label">免费提供</p><strong class="stat-number" id="free-tokens" data-target="5303716617">0</strong><span class="stat-unit">Tokens</span></article>
         </div>
-        <p class="stats-status">数据会定期更新，以账户实际到账额度为准。</p>
+        <p class="stats-status">数字取自站内实际用量统计，会随大家的每一笔调用持续累加。</p>
       </div>
     </section>
 
@@ -231,31 +230,60 @@
   <script>
     (function () {
       var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var nums = document.querySelectorAll('.stat-number');
+
+      /* 从元素「当前显示的值」滚到它的 data-target。当前值记在 data-shown 上，
+         因为 textContent 带千位分隔符，读回来会断在第一个逗号上。 */
       function run(el) {
         var target = parseInt(el.getAttribute('data-target'), 10) || 0;
+        var from = parseInt(el.getAttribute('data-shown'), 10) || 0;
+        el.setAttribute('data-shown', String(target));
         if (reduce) { el.textContent = target.toLocaleString('zh-CN'); return; }
         var dur = 1300, start = null;
         function step(ts) {
           if (start === null) start = ts;
           var p = Math.min((ts - start) / dur, 1);
           var eased = 1 - Math.pow(1 - p, 3);
-          el.textContent = Math.round(target * eased).toLocaleString('zh-CN');
+          el.textContent = Math.round(from + (target - from) * eased).toLocaleString('zh-CN');
           if (p < 1) requestAnimationFrame(step);
         }
         requestAnimationFrame(step);
       }
-      var nums = document.querySelectorAll('.stat-number');
+
+      var played = [];
+      function playOnce(el) {
+        if (played.indexOf(el) !== -1) return;
+        played.push(el);
+        run(el);
+      }
       // 进入视口才触发数字动画，避免首屏加载就把动画播完（滑到时已经结束）。
       if (reduce || !('IntersectionObserver' in window)) {
-        nums.forEach(run);
-        return;
+        nums.forEach(playOnce);
+      } else {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { playOnce(e.target); io.unobserve(e.target); }
+          });
+        }, { threshold: 0.5 });
+        nums.forEach(function (n) { io.observe(n); });
       }
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting) { run(e.target); io.unobserve(e.target); }
+
+      /* 「免费提供」的数字来自站内 /api/site_stats（同源，无需跨域配置），口径是福利分组的累计用量。
+         接口拿不到时保持 HTML 里的 data-target —— 那是上一次的真实统计值，不会退化成编的数字；
+         返回 0 或异常值同样忽略（分组被改名时宁可停在旧值，也不要显示 0）。
+         动画已经播过才拿到接口数据的话，再滚一次补上，否则会一直停在兜底值。 */
+      var freeTokens = document.getElementById('free-tokens');
+      fetch('/api/site_stats', { headers: { Accept: 'application/json' } })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (payload) {
+          var value = payload && payload.data ? Number(payload.data.free_tokens) : NaN;
+          if (!freeTokens || !isFinite(value) || value <= 0) return;
+          freeTokens.setAttribute('data-target', String(value));
+          if (played.indexOf(freeTokens) !== -1) run(freeTokens);
+        })
+        .catch(function () {
+          /* 保持兜底值即可，这里没有别的降级动作。 */
         });
-      }, { threshold: 0.5 });
-      nums.forEach(function (n) { io.observe(n); });
     })();
   </script>
 </body>
