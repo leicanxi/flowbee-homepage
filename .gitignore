@@ -8,3 +8,17 @@ Thumbs.db
 
 # Local project memory (not part of the site)
 .workbuddy/
+
+# 本机验证产物与临时调试文件
+# 截图（output/ 里全是渲染验证图，6M+，不该进仓库）
+output/
+verify-*.png
+
+# 一次性调试脚本 / 渲染探针（文件名一律以 _ 前缀标记）
+_*.html
+_*.py
+_*.cjs
+
+# 基线备份（改名前的整份页面快照）
+*.bak
+*.bak-*
