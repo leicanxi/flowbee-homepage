@@ -73,9 +73,24 @@
     .nav-links { display: none; align-items: center; gap: 26px; margin-left: auto; }
     /* 导航项用 detail-s（0.875rem）—— Anthropic 的界面文字都落在 detail 这一级，
        比正文小、比脚注大，是"看得清但不抢戏"的那一档。 */
-    .nav-link { position: relative; color: var(--muted); font-size: .875rem; font-weight: 500; text-decoration: none; transition: color .2s var(--ease); }
-    .nav-link::after { content: ""; position: absolute; left: 0; right: 0; bottom: -5px; height: var(--border-w); background: var(--accent-deep); border-radius: 9px; transform: scaleX(0); transition: transform .22s var(--ease); }
-    .nav-link:hover { color: var(--ink); } .nav-link:hover::after { transform: scaleX(1); }
+    /* 悬停下划线，照 anthropic.com 顶部导航的做法：
+       线**一直都在**（text-decoration-line: underline），只是颜色常态透明，
+       悬停时把 text-decoration-color 过渡到实色。
+       实测对方的值（nav_links_link.is-desktop，hover 前后各取一次 computedStyle）：
+         常态  td-line: underline / td-color: rgba(0,0,0,0) / offset: 4px / transition: text-decoration-color .2s
+         悬停  td-color: rgb(20,20,19)   ← 唯一变化的属性就是它，文字自身的 color 不动
+       这里沿用同一套：--u 这个"恒等变量"是为了让"透明 → 当前色"能在 color 也跟着变的
+       情况下自动跟随，不必把颜色写死两遍。 */
+    .nav-link {
+      --u: currentColor;
+      position: relative; color: var(--muted); font-size: .875rem; font-weight: 500;
+      text-decoration-line: underline;
+      text-decoration-color: transparent;
+      text-decoration-thickness: from-font;
+      text-underline-offset: 4px;
+      transition: color .2s var(--ease), text-decoration-color .2s var(--ease);
+    }
+    .nav-link:hover { color: var(--ink); text-decoration-color: var(--u); }
     /* ===== 「Try FlowBee」分体按钮 =====
        左边主体直接跳登录（原来的行为），右边箭头展开二级入口。
        这样"控制台"就不用再单独占导航栏一格了 —— 它收进菜单里当 API 入口。
@@ -429,7 +444,7 @@
     footer { border-top: var(--border-w) solid var(--line); background: var(--slate-dark); color: var(--ivory-light); }
     .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px 32px; padding-block: 40px; color: var(--muted); font-size: .8125rem; }
     .footer-brand { display: flex; align-items: center; gap: 12px; }
-    .footer-brand img { width: auto; height: 28px; }
+    /* 页脚不再有 <img>，原先的 .footer-brand img { width:auto; height:28px } 已删。 */
     .footer-brand p { margin: 0; max-width: 46ch; line-height: 1.6; }
     .footer-links { display: flex; flex-wrap: wrap; gap: 10px 22px; }
     .footer-links a { color: #d1cfc5; font-weight: 400; text-decoration: none; transition: color .2s var(--ease); }
@@ -455,7 +470,6 @@
     .nav-mark-img { display: none; }
     .nav-links { gap: 34px; }
     .nav-link { color: var(--ink); font-size: 1rem; font-weight: 500; }
-    .nav-link::after { display: none; }
     .try-group { border-radius: 10px; background: var(--ink); }
     .try-main { min-height: 38px; padding: 8px 16px; font-size: 14px; }
     .hero { min-height: 660px; padding-block: 120px 110px; background: var(--ivory-light); border-bottom: 0; }
@@ -498,8 +512,22 @@
     footer { background: var(--ink); }
     .footer-inner { width: min(100%, 1512px); margin-inline: auto; padding: 88px clamp(24px, 5vw, 80px) 42px; align-items: flex-start; }
     .footer-brand { align-items: flex-start; flex-direction: column; gap: 20px; }
-    .footer-brand img { filter: grayscale(1) brightness(0) invert(1); height: 34px; }
-    .footer-brand p { max-width: 30ch; font-family: var(--font-serif); font-size: 1.1rem; }
+    /* 页脚的 <img> 已移除（改用文字标志，见 footer-brand 处注释）。
+       下面这条 .footer-brand img 的滤镜规则一并删掉了 —— 它正是把 logo 变成白块的元凶，
+       留着的话，将来谁再往这一格塞图片都会重蹈覆辙。
+       原先同处还有 .footer-brand img[hidden] { display: none }，也随图片一起失去意义。 */
+    /* 只作用于文案那一行。这里原本写的是 .footer-brand p（0,1,1），
+       它会在层叠里压过 .footer-copyright（同为 0,1,0 的类，但 .footer-brand p
+       多一个元素选择器，特异性更高），导致版权行的字号/颜色声明失效。
+       改成只点名 .footer-tagline，两条规则各管各的，互不干扰。 */
+    .footer-tagline { max-width: 24ch; font-family: var(--font-serif); font-size: 1.1rem; }
+    /* 版权单独一行。
+       原来把「文案 · © 2026 FlowBee」塞在同一个 <p> 里，窄屏下文案会折行，
+       版权就被一起带到第二行的行尾，孤零零挂在那儿（用户截图里就是这个样子）。
+       拆成两个 <p> 后：文案自己折行、版权永远独立成行，
+       而且 .footer-brand 是 column + gap，两行之间自然有一段间距，不用再手写 margin。
+       版权用更小的字号和更暗的颜色，明确它不是正文的一部分。 */
+    .footer-copyright { margin: 0; max-width: none; font-family: var(--font-sans); font-size: .875rem; line-height: 1.6; color: #87867f; }
     .footer-links { max-width: 540px; display: grid; grid-template-columns: repeat(2,1fr); gap: 18px 48px; font-size: 1rem; }
     @media (max-width: 900px) { .hero-grid, .wish-board { grid-template-columns: 1fr; } .hero { min-height: auto; padding-top: 82px; } .hero-art { min-height: 330px; } .nav-links { gap: 16px; } }
     @media (max-width: 719px) { .nav-inner { min-height: 68px; } .nav-links, .try-group { display: none; } .hero h1 { font-size: clamp(3.3rem, 16vw, 5.2rem); } .hero-copy { font-size: 1.25rem; } .hero-art { margin-top: 12px; padding: 18px; border-radius: 20px; } .api-journey { margin-top: 54px; } .section { padding-block: 82px; } .stats { grid-template-columns: 1fr; gap: 24px; } .stat-card { border-right: 0; border-bottom: 1px solid #14141326; padding-bottom: 24px; } .footer-links { grid-template-columns: 1fr 1fr; } }
@@ -623,8 +651,13 @@
     .nav-inner { min-height: 76px; max-width: 1360px; padding-inline: 40px; }
     .nav-brand { font-size: 24px; font-weight: 600; text-transform: none; }
     .nav-mark-img { display: block; width: 30px; height: 30px; }
-    .nav-mark-img[hidden], .footer-brand img[hidden] { display: none; }
-    .footer-wordmark { font: 32px/1.2 Georgia, serif; color: var(--ivory-light); }
+    /* 只保留导航 logo 的 hidden 兜底；.footer-brand img 已随图片删除 */
+    .nav-mark-img[hidden] { display: none; }
+    /* 页脚文字标志：页脚是深色底，用象牙白；字体跟全站一致（衬线体的拉丁字形）。
+       原来写的 Georgia 是 Windows 系统衬线，和站内自托管的思源宋体不是一支，
+       同一页里会出现两种衬线，所以改成 --font-serif 打头、Georgia 只作兜底。
+       字重 600 是为了压住深色底上的视觉变细效应 —— 浅字压深底会比在浅底上显得更细。 */
+    .footer-wordmark { font-family: var(--font-serif); font-size: 32px; font-weight: 600; line-height: 1.2; color: var(--ivory-light); }
     .nav-link { font-size: 14px; }
     .nav-actions { z-index: 21; }
     .button, .try-group, .closing-cta__button { border-radius: 6px; }
@@ -705,7 +738,9 @@
     .wish-cta p { line-height: 1.8; }
     .closing-cta { padding: 88px 24px; }
     .closing-cta h2 { max-width: 20em; font-family: var(--font-serif); font-size: 40px; font-weight: 400; line-height: 1.6; }
-    .footer-brand p { font-family: var(--font-sans); font-size: 14px; }
+    /* 只作用于文案那一行。原来写的是 .footer-brand p，会把版权行一起改掉 ——
+       版权要的是更小的字号 + 更暗的颜色，不能被这条覆盖。 */
+    .footer-tagline { font-family: var(--font-sans); font-size: 14px; }
     @media (max-width: 1000px) {
       .hero-content { gap: 20px 40px; }
       .hero h1 { font-size: 64px; }
@@ -786,7 +821,8 @@
     .nav-links { gap: 24px; }
     .nav-link { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 400; white-space: nowrap; }
     .nav-link[hidden] { display: none; }
-    .nav-link:hover { color: var(--muted); }
+    .nav-link:hover { color: var(--ink); text-decoration-color: var(--u); }
+    .nav-link:focus-visible { outline: var(--border-w) solid var(--accent-deep); outline-offset: 4px; border-radius: 2px; }
     .nav-actions { gap: 12px; }
     .nav-bell, .nav-burger { width: 44px; height: 44px; border: 0; border-radius: 4px; color: var(--ink); }
     .try-group { background: var(--ink); border-radius: 5px; }
@@ -836,7 +872,134 @@
       @keyframes menu-unfold { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
       @keyframes mobile-unfold { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
     }
-  </style>
+    /* ===== Q&A 抽屉（照 anthropic.com/careers 的 DrawerList）=====
+       纯 CSS 实现，不用 JS：<input type="checkbox"> 当开关，
+       :checked 驱动内容 grid-template-rows / 加号旋转 / 悬停底色。
+       不用 <details>：spec 里做不了"互斥展开"，<summary> 的默认三角也要额外抹掉。
+
+       ⚠️ 布局是**两栏并列**，不是"标题在上、列表在下"。
+       这是照参考截图量出来的（2421x508 @dpr2 -> CSS 1210x254）：
+         左栏起点 = 视口 5.0%，右栏起点 = 视口 52.5%
+       右栏起点基本就在正中间，即 1:1 两栏；左栏内容宽 415、右栏 230。
+       参考里列表的第一条分割线**和左栏导语的顶端齐平**，
+       也就是说 eyebrow + 标题 那一段只有左栏有内容，右栏从导语高度才起步。
+       本站容器口径是 1180px，按 52.5% 折算 -> 左栏 ~580 / 间隙 80 / 右栏 ~520。 */
+    .qa {
+      padding-block: 96px 88px;
+      border-top: var(--border-w) solid var(--line);
+    }
+    .qa__inner {
+      width: min(100%, var(--container)); margin-inline: auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+      align-items: start;
+    }
+    /* 左栏：eyebrow + 标题 + 导语。
+       参考里这块宽度只占左栏的约 72%（415 里头 ~300 宽的文字），
+       所以给一个上限，别让它拉满整栏 —— 拉满会让标题折行位置和参考差很远。 */
+    .qa .section-heading { max-width: 360px; margin-bottom: 0; }
+    /* 参考的标题明显比本站 .section-heading h2（36px）小一档，
+       cap 高只有左栏导语 x-height 的 1.84 倍。按参考比例压到 32px，
+       行高 1.25 也收紧一点（参考里标题是一行，行高压太松会显得孤立）。 */
+    .qa .section-heading h2 { font-size: 32px; line-height: 1.25; }
+    .qa .section-heading p { max-width: 34ch; font-size: 15px; line-height: 1.7; }
+    /* 右栏列表：**顶部不出分割线**，每项只带自己下方一条线
+       （即第 N 项的下边线同时是第 N+1 项的上边界感）。
+       所以这里不能再给 .qa__list 加 border-top，
+       否则第一条问题上头会多出一道横线 —— 用户明确要去掉。
+       最后一项的 border-bottom 保留，作为整块收尾的细线。 */
+    /* 对齐：右栏第一项的文字要和左栏标题**顶端对齐**。
+       grid 是 align-items:start，两栏容器顶端本来就齐；差的是"容器顶 → 文字顶"的偏移：
+       左栏 h2 行高 40px / 字号 32px，多出的半行（(40-32)/2 = 4px）加上字体自身的
+       上沿留白，实测文字顶比容器顶低 ~3px；右栏 label 有 20px 上内边距。
+       label 的 padding-top 是 label 盒子内部的留白，会把文字往下推 20px；
+       而左栏 h2 只往下推 ~10px，所以列表要上提 10px 才能让两边文字顶齐平。
+       ⚠️ 实测：margin-top: -10px 时两边文字顶差 = 0（-20px 会低 10px、-30px 会高 10px）。
+       改标题字号或 label padding 时这个值要跟着重算，别照抄。 */
+    .qa__list { margin-top: -10px; }
+    .qa-item { border-bottom: var(--border-w) solid var(--line); }
+    /* 视觉上隐藏，但仍可聚焦、可被读屏朗读 —— 不用 display:none，
+       否则键盘 Tab 不到，整块就变成鼠标专用了。 */
+    .qa-item__input {
+      position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+      overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); border: 0;
+    }
+    /* 参考的项高是 60px 左右、文字在项内垂直居中，左右不留内缩
+       （文字和分割线左右端点对齐）。所以 padding 只在上下，不给左右。 */
+    .qa-item__label {
+      display: flex; align-items: center; justify-content: space-between; gap: 24px;
+      padding: 20px 0; cursor: pointer;
+      transition: color .18s var(--ease);
+    }
+    .qa-item__label:hover { color: var(--accent-deep); }
+    /* 键盘聚焦时给整个标签一圈描边（input 已视觉隐藏，
+       不给替代态的话键盘用户根本看不到自己在哪一项）。 */
+    .qa-item__input:focus-visible + .qa-item__label { outline: var(--border-w) solid var(--accent-deep); outline-offset: 4px; }
+    /* 参考里列表项字号明显小于左栏导语，实测量出约 17.4px。
+       本站导语是 15px，按比例取 17px：比导语略大一点点，层级和参考一致。 */
+    .qa-item__q {
+      font-family: var(--font-sans); font-size: 17px; font-weight: 500; line-height: 1.45;
+      text-wrap: balance;
+    }
+    /* 加号图标：两条 1.5px 细杠，横杠随展开旋转 90° 收进竖杠，形成"减号"。
+       尺寸照官网 ToggleIcon：外框 24px、杠长 13.5px。 */
+    .qa-item__icon { position: relative; flex: none; width: 24px; height: 24px; color: var(--muted); }
+    .qa-item__icon::before, .qa-item__icon::after {
+      content: ''; position: absolute; top: 50%; left: 50%; background: currentColor;
+      transform: translate(-50%, -50%); border-radius: 100rem;
+      transition: transform .28s var(--ease), opacity .28s var(--ease);
+    }
+    .qa-item__icon::before { width: 13.5px; height: 1.5px; }
+    .qa-item__icon::after { width: 1.5px; height: 13.5px; }
+    .qa-item__label:hover .qa-item__icon { color: var(--accent-deep); }
+    .qa-item__input:checked + .qa-item__label .qa-item__icon::before { transform: translate(-50%, -50%) rotate(90deg); opacity: 0; }
+    .qa-item__input:checked + .qa-item__label { color: var(--accent-deep); }
+    /* 展开动画用 grid-template-rows: 0fr → 1fr，而不是 max-height。
+       max-height 得猜一个够大的值，猜大了展开会有明显延迟、猜小了内容被截；
+       0fr→1fr 是浏览器按真实高度插值，多长的答案都跟手，也不用改数值。
+       内层必须再包一个 div 并设 overflow:hidden，否则 grid item 会溢出来。 */
+    .qa-item__panel {
+      display: grid; grid-template-rows: 0fr;
+      transition: grid-template-rows .34s var(--ease);
+    }
+    .qa-item__input:checked + .qa-item__label + .qa-item__panel { grid-template-rows: 1fr; }
+    .qa-item__panel > div { overflow: hidden; }
+    .qa-item__body { padding: 0 0 22px; }
+    .qa-item__body p {
+      margin: 0; color: var(--muted);
+      font-family: var(--font-sans); font-size: 15px; line-height: 1.8;
+    }
+    .qa-item__body p + p { margin-top: 10px; }
+    .qa-item__body code {
+      padding: 2px 6px; border-radius: var(--radius-sm); background: var(--ivory-medium);
+      font-family: var(--font-sans); font-size: .9em; color: var(--slate-medium);
+    }
+    .qa-item__body a { color: var(--accent-deep); text-underline-offset: 3px; }
+    /* 窄屏折回单列。参考的移动截图（294.5px 宽）也是"标题在上、列表在下"，
+       而且两段之间隔了 71px —— 不是简单贴在一起，
+       所以这里 margin-top 给到 44px 而不是 0，保留段落感。
+       ⚠️ 窄屏**不能**沿用桌面的 -10px：那个负值是给"两栏并排、文字顶对齐"用的，
+       折成单列后两栏变上下堆叠，再用负边距会把列表顶到标题上重叠。 */
+    @media (max-width: 900px) {
+      .qa__inner { grid-template-columns: 1fr; gap: 0; }
+      .qa .section-heading { max-width: none; }
+      .qa__list { margin-top: 44px; }
+    }
+    @media (max-width: 719px) {
+      .qa { padding-block: 64px 56px; }
+      .qa .section-heading h2 { font-size: 26px; }
+      .qa .section-heading p { font-size: 15px; }
+      .qa__list { margin-top: 40px; }
+      .qa-item__label { padding: 17px 0; gap: 16px; }
+      .qa-item__q { font-size: 16px; }
+      .qa-item__body { padding-bottom: 20px; }
+      .qa-item__body p { font-size: 15px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .qa-item__panel { transition: none; }
+      .qa-item__icon::before, .qa-item__icon::after { transition: none; }
+    }
+
+</style>
 </head>
 <body>
   <!-- 导航栏里的站内链接，显隐跟着站内后台「导航栏模块」的开关走（页尾脚本读 /api/status
@@ -919,7 +1082,8 @@
         <div class="hero-content">
           <h1 id="hero-title">贴心服务，<span class="hero-tagline">温暖接入。</span></h1>
           <div>
-          <p class="hero-copy">FlowBee 是一个只给熟人圈用的小服务。我们把模型连接变得简单，让聊天、创作和代码里的想法，都能自然地继续。模型全部公开可测，也会持续听见每一个建议。</p>
+          <p class="hero-copy">FlowBee 致力于最温暖贴心的接入。我们把模型连接变得简单，让聊天、创作和代码里的想法，
+            都能自然地继续。提供免费的使用，模型全部公开可测，也会持续听见每一个建议。</p>
           <div class="hero-actions">
             <a class="button button-primary" href="https://flowbee.top/sign-in">登录 FlowBee</a>
             <a class="button button-secondary" href="https://docs.flowbee.top">连接教程 <span aria-hidden="true">→</span></a>
@@ -933,7 +1097,7 @@
       <div class="image-story__frame">
         <img class="image-story__image" src="https://img.remit.ee/i/hA4a1a9BegBj" alt="" fetchpriority="high">
         <div class="image-story__copy">
-          <h2 id="image-story-title"><span>不用为api</span><span>一直心疼价格</span></h2>
+          <h2 id="image-story-title"><span>不用为API</span><span>一直心疼价格</span></h2>
           <p class="image-story__description">分钟级免费次数以及补贴折扣，轻度使用基本不花钱</p>
           <a class="button image-story__link" href="https://flowbee.top/sign-in">开始使用 <span aria-hidden="true">→</span></a>
         </div>
@@ -969,7 +1133,7 @@
     <section class="section impact" aria-labelledby="impact-title">
       <div class="container">
         <div class="section-heading">
-          <p class="eyebrow">共同撑起 FlowBee</p>
+          <p class="eyebrow">FLOWBEE FOR FREE</p>
           <h2 id="impact-title">免费调用，flowbee专属补贴</h2>
           <p>免费次数每分钟刷新，对于极高强度或高并发还有补贴额度支撑，调用顺序免费＞补贴</p>
         </div>
@@ -1090,6 +1254,91 @@
         </div>
       </div>
     </section>
+
+    <!-- Q&A 抽屉区块：位置在「愿望清单」之后、closing-cta（准备好把下一次...）之前。
+         设计照 anthropic.com/careers 的 DrawerList，比例是从对方截图量出来的：
+         两栏并列（左栏标题+导语 / 右栏折叠列表），右栏起点约在容器 52.5% 处。
+         交互是纯 CSS（checkbox + label），不依赖脚本，整块可静态渲染。
+         参考里这一块**没有 eyebrow 行**，所以这里也不放。
+         ⚠️ label 的 for 必须与 input 的 id 一一对应且全页唯一，
+         复制新增条目时记得同步改这两处的编号，否则点了没反应。
+         上面那条分割线由 .qa 的 border-top 负责；底部不加线，
+         直接衔接下面深色的 closing-cta。 -->
+    <section class="qa" id="qa" aria-labelledby="qa-title">
+      <div class="container qa__inner">
+        <div class="section-heading">
+          <h2 id="qa-title">你可能想问的</h2>
+          <p>从接入到计费，最常被问到的几个问题都在这里。没找到答案，可以到愿望广场直接问我们。或直接加入QQ群。</p>
+        </div>
+        <div class="qa__list">
+          <div class="qa-item">
+            <input class="qa-item__input" type="checkbox" id="qa-1" name="qa">
+            <label class="qa-item__label" for="qa-1">
+              <span class="qa-item__q">FlowBee 是免费的吗？</span>
+              <span class="qa-item__icon" aria-hidden="true"></span>
+            </label>
+            <div class="qa-item__panel"><div>
+              <div class="qa-item__body">
+                <p>分钟级刷新的免费次数，登陆后侧边栏点击“福利”查看速率等级。站内所有模型都公开可测，速率和真实表现可以直接自己验证。</p>
+                <p>我们还提供补贴的额度，具体额度规则和价格都写在模型广场上，不会藏在某个角落。</p>
+              </div>
+            </div></div>
+          </div>
+          <div class="qa-item">
+            <input class="qa-item__input" type="checkbox" id="qa-2" name="qa">
+            <label class="qa-item__label" for="qa-2">
+              <span class="qa-item__q">怎么把 FlowBee 接到我自己在用的客户端上？</span>
+              <span class="qa-item__icon" aria-hidden="true"></span>
+            </label>
+            <div class="qa-item__panel"><div>
+              <div class="qa-item__body">
+                <p>FlowBee 提供 OpenAI 兼容接口，任何支持自定义 API 地址的客户端都能接：把接口地址填成 <code>https://flowbee.top/v1</code>，再贴上你的密钥即可。</p>
+                <p>常见客户端的图文步骤整理在<a href="https://docs.flowbee.top" target="_blank" rel="noopener">连接教程</a>里；遇到卡住的环节，可联系站长免费帮忙。</p>
+              </div>
+            </div></div>
+          </div>
+          <div class="qa-item">
+            <input class="qa-item__input" type="checkbox" id="qa-3" name="qa">
+            <label class="qa-item__label" for="qa-3">
+              <span class="qa-item__q">会上传或留存我的聊天内容吗？</span>
+              <span class="qa-item__icon" aria-hidden="true"></span>
+            </label>
+            <div class="qa-item__panel"><div>
+              <div class="qa-item__body">
+                <p>你的对话仅用于完成这次请求，不用于训练，也不会拿去卖给第三方。请求发往上游模型服务商时会走加密连接。</p>
+                <p>我们无法查看您的具体请求内容，我们只有token数、缓存等数据。</p>
+              </div>
+            </div></div>
+          </div>
+          <div class="qa-item">
+            <input class="qa-item__input" type="checkbox" id="qa-4" name="qa">
+            <label class="qa-item__label" for="qa-4">
+              <span class="qa-item__q">支持哪些模型？可以直接换吗？</span>
+              <span class="qa-item__icon" aria-hidden="true"></span>
+            </label>
+            <div class="qa-item__panel"><div>
+              <div class="qa-item__body">
+                <p>主流厂商的文本、推理、生图和语音模型都在持续接入，完整清单和实时可用状态见模型广场。切换只需要改一次模型名，接口地址和密钥都不用动。</p>
+                <p>Cline、Claude Code、Codex 这类编码工具也能直接用，配置方式与普通客户端一致。</p>
+              </div>
+            </div></div>
+          </div>
+          <div class="qa-item">
+            <input class="qa-item__input" type="checkbox" id="qa-5" name="qa">
+            <label class="qa-item__label" for="qa-5">
+              <span class="qa-item__q">用起来出问题，或者想要某个功能，在哪里说？</span>
+              <span class="qa-item__icon" aria-hidden="true"></span>
+            </label>
+            <div class="qa-item__panel"><div>
+              <div class="qa-item__body">
+                <p>去<a href="https://post.flowbee.top" target="_blank" rel="noopener">愿望广场</a>留言就行——想要的模型、缺掉的功能、遇到的报错，都记在同一处。</p>
+                <p>高频愿望会优先进入规划，也会在下一次更新里被提到。你也可以加入 QQ 群，@群主或者和同样在用的人聊。</p>
+              </div>
+            </div></div>
+          </div>
+        </div>
+      </div>
+    </section>
     <section class="closing-cta" aria-labelledby="closing-title">
       <h2 id="closing-title">准备好把下一次调用交给 FlowBee 了吗？</h2>
       <a class="closing-cta__button" href="https://flowbee.top/sign-in">进入 FlowBee <span aria-hidden="true">→</span></a>
@@ -1097,10 +1346,17 @@
   </main>
   <footer>
     <div class="container footer-inner">
+      <!-- 页脚品牌改用文字标志，不再放图片。
+           原因：原来那张 logo 是「不透明米色底」的方形 PNG（1254×1254，无 alpha 通道），
+           配上 .footer-brand img 的 filter 后整张图会被抹成纯白方块 ——
+           brightness(0) 把每个像素压成 0，随后 invert(1) 又翻成 255，
+           结果是 255,255,255 的白块（逐像素推演过，不是"图没加载"）。
+           深色页脚上放彩色方图也会露出米色底，所以这里直接用文字最干净。
+           导航栏的 logo 是彩色正常显示的，本次不动。 -->
       <div class="footer-brand">
-        <span class="footer-wordmark" hidden>FlowBee</span>
-        <img id="footer-logo" src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEZxkFqjFfnBZM5o9Nv97y2PmMZr3TC9AAC_TMAAg-uYVRsP0CpUPcQPj0E.png" alt="FlowBee">
-        <p>仅供亲朋好友以及粉丝使用，不对外公开盈利 · © 2026 FlowBee</p>
+        <span class="footer-wordmark">FlowBee</span>
+        <p class="footer-tagline">FlowBee 致力于提供最温暖贴心的接入</p>
+        <p class="footer-copyright">© 2026 FlowBee</p>
       </div>
       <!-- 这里原本有一条「1对1 指导 → /contact」，但站内并没有 /contact 这个路由，
            点进去会落到站内 404 页，所以先摘掉；要恢复就换成真实地址。 -->
@@ -1110,6 +1366,7 @@
         <a href="https://docs.flowbee.top/">参考文档</a>
         <a href="https://post.flowbee.top">愿望广场</a>
         <a href="https://chat.flowbee.top">Flowbee Chat</a>
+        <a href="https://qm.qq.com/q/7CQM4HoF0c">加入QQ群</a>
       </nav>
     </div>
   </footer>
@@ -1448,10 +1705,15 @@
 
         var logo = status.logo;
         if (logo) {
-          ['nav-logo', 'footer-logo'].forEach(function (id) {
-            var img = document.getElementById(id);
-            if (img) img.src = logo;
-          });
+          /* 页脚已改用文字标志，只剩导航栏这一处 <img> 需要换源。
+             同时把站名同步给页脚文字标志，免得后台改了 system_name 之后
+             导航栏变了、页脚还硬写着 FlowBee。 */
+          var navImg = document.getElementById('nav-logo');
+          if (navImg) navImg.src = logo;
+        }
+        if (status.system_name) {
+          var wordmark = document.querySelector('.footer-wordmark');
+          if (wordmark) wordmark.textContent = status.system_name;
         }
 
         if (status.docs_link) {
@@ -1869,18 +2131,18 @@
     })();
   </script>
   <script>
-    ['nav-logo', 'footer-logo'].forEach(id => {
-      const img = document.getElementById(id);
+    /* 导航栏 logo 的加载兜底：拿不到图就把它藏起来，露出旁边的站点名文字
+       （.nav-brand 里那个 <span id="nav-name">），至少不会留一个破图图标。
+       页脚原本也走这套兜底，但页脚现在直接用文字标志、没有 <img> 了，
+       所以这里只剩 nav-logo 一个目标。 */
+    (function () {
+      var img = document.getElementById('nav-logo');
       if (!img) return;
-      const update = () => {
-        const failed = !img.naturalWidth;
-        img.hidden = failed;
-        if (id === 'footer-logo') document.querySelector('.footer-wordmark').hidden = !failed;
-      };
+      var update = function () { img.hidden = !img.naturalWidth; };
       img.addEventListener('error', update);
       img.addEventListener('load', update);
       if (img.complete) update();
-    });
+    })();
   </script>
 </body>
 </html>
