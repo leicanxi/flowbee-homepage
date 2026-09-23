@@ -14,11 +14,15 @@ Thumbs.db
 output/
 verify-*.png
 
-# 一次性调试脚本 / 渲染探针（文件名一律以 _ 前缀标记）
+# 一次性调试脚本 / 渲染探针 / 调试截图（文件名一律以 _ 前缀标记）
 _*.html
 _*.py
 _*.cjs
 _*.log
+_*.err
+_*.png
+_*.json
+live-shots/
 
 # 基线备份（改名前的整份页面快照）
 *.bak

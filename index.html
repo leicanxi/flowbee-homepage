@@ -1086,7 +1086,12 @@
       .response-dot {
         animation: response-glow 4.2s 2.5s var(--ease) infinite;
       }
-      .stat-card {
+      /* 这张卡原本是页面加载时就播一次 rise 的。有了滚动入场编排之后要让它退位：
+         动画的优先级高于普通声明，它会把卡片直接锁在 opacity:1，
+         于是"进视口才入场"的规则根本压不住 —— 用户滚到这里时动画早播完了。
+         有编排（html.reveal-ready，由 <head> 守卫脚本决定）就交给编排；
+         没有（JS 没跑 / 不支持 IO / 用户要求减弱动效）就保持原来这套。 */
+      html:not(.reveal-ready) .stat-card {
         animation: rise .6s var(--ease) both;
       }
       @keyframes rise {
@@ -1807,6 +1812,27 @@
       display: block;
       font: inherit;
     }
+    /* ===== 标题第二行的打字动画 =====
+       初始隐藏挂在 html.hero-typing 上（见 <head> 末尾那行），由页尾脚本摘掉。
+       .hero-tagline 是 display:block 的单行文本，逐字输出时行盒高度不变，
+       所以下面那段 hero-copy 不会跟着跳。 */
+    .hero-typing .hero-tagline {
+      visibility: hidden;
+    }
+    .hero-caret {
+      display: inline-block;
+      width: .07em;
+      height: .92em;
+      margin-left: .08em;
+      vertical-align: -.1em;
+      background: currentColor;
+      animation: caret-blink 1s steps(1, end) infinite;
+    }
+    @keyframes caret-blink {
+      50% {
+        opacity: 0;
+      }
+    }
     .hero-actions {
       display: flex;
       flex-wrap: wrap;
@@ -2263,17 +2289,110 @@
       line-height: 1.65;
       text-wrap: balance;
     }
+    /* 液态玻璃（liquid glass）。要点不是"更透明"，而是"更厚、更亮、边缘有镜面反光"：
+       苹果那套材质拆成折射层 / 底色层 / 高光层 / 内容层，这里用分层 CSS 近似。
+       真折射（背景被"掰弯"）要靠 SVG feDisplacementMap，只有 Chromium 支持、
+       而且每帧要 4~8ms，放在一个几十像素高的按钮上既看不出也不划算，所以不上。
+       四层分别是：
+         ① 底色：奶白实色底（hover 可平滑过渡）+ 左上到右下的高光渐变，做出玻璃弧度。
+            刻意保留 58%~91% 的实底 —— 这张配图中间偏亮，太透会读不清深色字。
+         ② 折射：backdrop-filter blur + saturate + 轻微提亮。
+         ③ 高光：inset 顶边 1.5px 纯白镜面、底边内侧回光、左右细边光、整体内发光。
+            真实玻璃边缘的反射率从正入射的 4% 升到掠射的 100%，所以顶边最亮、侧边次之。
+         ④ ::before 是斜向 sheen（hover 时扫过），::after 是下缘那道折射亮线。
+       position/isolation 是为了让负 z-index 的伪元素正好夹在底色和文字之间。 */
     .image-story__link {
+      position: relative;
+      isolation: isolate;
       min-height: 36px;
       margin-top: 24px;
       padding: 8px 16px;
-      background: var(--ivory-light);
-      color: var(--ink);
       font-size: 14px;
       font-weight: 500;
+      color: var(--ink);
+      overflow: hidden;
+      border: 1px solid rgb(255 255 255 / 46%);
+      /* 分开写 background-color / background-image：渐变本身不能过渡，
+         但实色底可以，所以 hover 的提亮交给 background-color 平滑过去。
+         白底由三层叠出来：实色底负责"奶白"与可读性；斜向渐变做出左上到右下的
+         厚度差；左上角那团径向高光假装"光源在左上"，静止时就有镜面感 ——
+         只靠 ::before 那道 hover 扫光的话，静止看就是一块平的白色药丸。
+         分量是实拍比过三组配方选的：下缘能透出照片的蓝，中间与旧版同为约 73% 白，
+         所以可读性没退，内部明暗差更大、更像一块玻璃。 */
+      background-color: rgb(255 255 255 / 52%);
+      background-image:
+        radial-gradient(120% 180% at 18% -18%, rgb(255 255 255 / 85%) 0%, rgb(255 255 255 / 0%) 60%),
+        linear-gradient(150deg, rgb(255 255 255 / 60%) 0%, rgb(255 255 255 / 20%) 46%, rgb(255 255 255 / 0%) 100%);
+      -webkit-backdrop-filter: blur(20px) saturate(200%) brightness(1.06);
+      backdrop-filter: blur(20px) saturate(200%) brightness(1.06);
+      box-shadow:
+        /* 顶缘：掠射角反射率最高，最亮的一笔留在这里 */
+        inset 0 2px 1px -1px rgb(255 255 255 / 98%),
+        /* 下缘内侧：玻璃把背景"抬上来"的那道折射带 */
+        inset 0 -3px 6px -3px rgb(255 255 255 / 90%),
+        inset 1px 0 1px rgb(255 255 255 / 34%),
+        inset -1px 0 1px rgb(255 255 255 / 34%),
+        inset 0 0 20px rgb(255 255 255 / 26%),
+        /* 外侧：贴地的一圈接触阴影 + 一层远投影，让玻璃"浮"在照片上 */
+        0 1px 2px rgb(8 20 32 / 22%),
+        0 12px 30px rgb(0 0 0 / 24%);
+      transition: background-color .32s var(--ease), border-color .32s var(--ease),
+        box-shadow .32s var(--ease);
+    }
+    .image-story__link::before {
+      content: "";
+      position: absolute;
+      inset: -40% -20%;
+      z-index: -1;
+      border-radius: inherit;
+      background: linear-gradient(115deg, transparent 34%, rgb(255 255 255 / 78%) 48%, transparent 62%);
+      opacity: 0;
+      transform: translateX(-55%);
+      transition: opacity .28s var(--ease), transform .8s var(--ease);
+      pointer-events: none;
+    }
+    .image-story__link::after {
+      content: "";
+      position: absolute;
+      inset: auto 10% -1px;
+      height: 1px;
+      z-index: -1;
+      background: linear-gradient(90deg, transparent, rgb(255 255 255 / 92%), transparent);
+      pointer-events: none;
     }
     .image-story__link:hover {
-      background: white;
+      border-color: rgb(255 255 255 / 78%);
+      background-color: rgb(255 255 255 / 72%);
+      box-shadow:
+        inset 0 2px 1px -1px rgb(255 255 255 / 100%),
+        inset 0 -3px 6px -3px rgb(255 255 255 / 96%),
+        inset 1px 0 1px rgb(255 255 255 / 46%),
+        inset -1px 0 1px rgb(255 255 255 / 46%),
+        inset 0 0 22px rgb(255 255 255 / 40%),
+        0 2px 4px rgb(8 20 32 / 22%),
+        0 16px 38px rgb(0 0 0 / 28%);
+    }
+    .image-story__link:hover::before,
+    .image-story__link:focus-visible::before {
+      opacity: 1;
+      transform: translateX(55%);
+    }
+    /* 不支持 backdrop-filter 的浏览器退回不透明底，可读性优先。 */
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      .image-story__link {
+        background-color: var(--ivory-light);
+        background-image: none;
+      }
+    }
+    /* 系统开了"降低透明度"就直接给实底，这是无障碍要求，不能让文字压在照片上。 */
+    @media (prefers-reduced-transparency: reduce) {
+      .image-story__link {
+        background-color: var(--ivory-light);
+        background-image: none;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+      }
+      .image-story__link::before { display: none; }
     }
     @media (max-width: 1000px) {
       .hero h1 {
@@ -2597,6 +2716,44 @@
       .mobile-menu:not([hidden]) {
         animation: mobile-unfold .85s cubic-bezier(.4,0,.2,1) backwards;
       }
+      .mobile-backdrop:not([hidden]) {
+        animation: backdrop-in .5s var(--ease) backwards;
+      }
+      /* 收起动画必须靠类撑着：hidden 一挂上元素就 display:none，动画根本没机会播。
+         JS 等到 animationend（或 1.2s 兜底）之后才挂 hidden，所以这里用 forwards 保持末态。
+         收起给 .5s、比展开的 .85s 快：退场动画比进场快是常规做法，一样慢会觉得拖沓。 */
+      .mobile-menu.is-closing {
+        animation: mobile-fold .5s cubic-bezier(.4,0,.2,1) forwards;
+        pointer-events: none;
+      }
+      .mobile-backdrop.is-closing {
+        animation: backdrop-out .5s var(--ease) forwards;
+        pointer-events: none;
+      }
+      @keyframes backdrop-in {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes backdrop-out {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
+      }
+      @keyframes mobile-fold {
+        from {
+          clip-path: inset(0);
+        }
+        to {
+          clip-path: inset(0 0 100% 0);
+        }
+      }
       @keyframes nav-enter {
         from {
           opacity: 0;
@@ -2857,7 +3014,48 @@
         transition: none;
       }
     }
+    /* ── 滚动入场编排 ────────────────────────────────────────────
+       只做「淡入 + 轻微上浮」，和整页克制的调子一致，不抢内容注意力。
+       html.reveal-ready 由 <head> 末尾那段内联脚本加上 —— 只有确认
+       「浏览器支持 IntersectionObserver 且用户没要求减少动效」时才把元素藏起来。
+       所以脚本半路报错、JS 被禁用、或用户开了减弱动效，内容永远是直接可见的，
+       不会出现整片空白（首屏打字动画当初就是踩过这个坑）。
+       用法：容器加 data-rv-group="错峰毫秒"，它的直接子元素按顺序依次进场；
+             单个元素加 data-rv 即可。延迟由页尾脚本写成 --rv-delay。 */
+    @media (prefers-reduced-motion: no-preference) {
+      html.reveal-ready [data-rv]:not(.is-in),
+      html.reveal-ready [data-rv-group] > :not(.is-in) {
+        opacity: 0;
+        transform: translate3d(0, var(--rv-y, 18px), 0);
+      }
+      html.reveal-ready [data-rv].is-in,
+      html.reveal-ready [data-rv-group] > .is-in {
+        animation: rv-in .72s var(--ease) var(--rv-delay, 0ms) both;
+      }
+    }
+    @keyframes rv-in {
+      from {
+        opacity: 0;
+        transform: translate3d(0, var(--rv-y, 18px), 0);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
   </style>
+  <!-- 打字动画的初始态：先把标题第二行藏起来，否则会先看到整句、再被清空重打。
+       这个类由页尾那段脚本负责摘掉（gsap 没加载、或用户要求减弱动效时也会摘），
+       所以不会出现"永久空白"。 -->
+  <script>
+    document.documentElement.classList.add('hero-typing');
+    /* 入场动画的开关。只有「支持 IntersectionObserver + 用户没要求减少动效」才打开；
+       不满足就把类名留在外面，CSS 里的隐藏规则不生效、内容直接可见 ——
+       这样即使页尾脚本报错，也不会把整页内容藏住。 */
+    if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('reveal-ready');
+    }
+  </script>
 </head>
 <body>
   <!-- 导航栏里的站内链接，显隐跟着站内后台「导航栏模块」的开关走（页尾脚本读 /api/status
@@ -2938,7 +3136,7 @@
     <section class="hero" aria-labelledby="hero-title">
       <div class="container hero-grid">
         <div class="hero-content">
-          <h1 id="hero-title">贴心服务，<span class="hero-tagline">温暖接入。</span></h1>
+          <h1 id="hero-title" aria-label="贴心服务，温暖接入。">贴心服务，<span class="hero-tagline">温暖接入。</span></h1>
           <div>
           <p class="hero-copy">FlowBee 致力于最温暖贴心的接入。我们把模型连接变得简单，让聊天、创作和代码里的想法，
             都能自然地继续。提供免费的使用，模型全部公开可测，也会持续听见每一个建议。</p>
@@ -2972,10 +3170,19 @@
         const frame = section.querySelector('.image-story__frame');
         const image = section.querySelector('.image-story__image');
         gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
-          const start = () => Math.max(200, section.offsetTop + section.offsetHeight / 2 - innerHeight * 0.7);
+          /* 起止用回原来那套算法：起点 = 区块中心升到视口 70% 处。
+             ⚠️ 别改成「区块刚进视口」那类算法 —— 这块区块紧跟在首屏下面，
+             offsetTop 只有 490px 左右，按"刚进视口"算出来的起点是 0 甚至负数，
+             等于一进页面动画就播掉一大半，人根本没看见展开过程。
+             提速靠两处，而不是把起点提前：
+               · 整段只跨 0.3 屏（原来 0.45 屏），划 270px 左右就展开完；
+               · scrub 0.8 → 0.3，去掉那段"追不上滚动"的拖尾感。
+             结果：起点更晚，但一划到就利落收尾，不会等划过去才展开完。 */
+          const revealStart = () => Math.max(200, section.offsetTop + section.offsetHeight / 2 - innerHeight * 0.7);
+          const revealEnd = () => revealStart() + innerHeight * 0.3;
           gsap.timeline({ scrollTrigger: {
-            trigger: section, start, end: () => start() + innerHeight * 0.45,
-            scrub: 0.8, invalidateOnRefresh: true
+            trigger: section, start: revealStart, end: revealEnd,
+            scrub: 0.3, invalidateOnRefresh: true
           } })
             .fromTo(frame, { clipPath: () => `inset(0px ${innerWidth < 720 ? 16 : Math.max(40, (document.documentElement.clientWidth - 1200) / 2)}px round ${innerWidth < 720 ? 16 : 24}px)` },
               { clipPath: 'inset(0px 0px round 0px)', duration: 1, ease: 'none' }, 0)
@@ -2985,20 +3192,57 @@
         image.addEventListener('load', () => ScrollTrigger.refresh());
       })();
     </script>
+    <script>
+      /* 「温暖接入。」逐字打出。
+         单独成块、不复用上面那段：上面那段在 gsap 缺失时会提前 return，
+         如果把摘隐藏类的逻辑放进去，gsap 一挂文字就永久藏住了。 */
+      (() => {
+        const tag = document.querySelector('.hero-tagline');
+        const reveal = () => document.documentElement.classList.remove('hero-typing');
+        if (!tag || !window.gsap || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          reveal();
+          return;
+        }
+        const full = tag.textContent;
+        const typed = document.createElement('span');
+        const caret = document.createElement('span');
+        caret.className = 'hero-caret';
+        caret.setAttribute('aria-hidden', 'true');
+        tag.textContent = '';
+        tag.append(typed, caret);
+        reveal();
+        const state = { n: 0 };
+        gsap.to(state, {
+          n: full.length,
+          duration: Math.max(0.7, full.length * 0.14),
+          delay: 0.35,
+          ease: 'none',
+          onUpdate() {
+            typed.textContent = full.slice(0, Math.round(state.n));
+          },
+          onComplete() {
+            gsap.to(caret, {
+              autoAlpha: 0, duration: 0.25, delay: 0.9,
+              onComplete() { tag.textContent = full; },
+            });
+          },
+        });
+      })();
+    </script>
     <!-- 「免费提供」的数字由页尾脚本从站内 /api/site_stats 拉取（同源，无需跨域配置）。
          data-target 是兜底值：接口拿不到时页面显示它，所以它必须是一次真实统计的结果，
          不是编出来的数字。改单位改下面的 <span class="stat-unit">，改兜底值改 data-target。 -->
     <section class="section impact" aria-labelledby="impact-title">
       <div class="container">
-        <div class="section-heading">
+        <div class="section-heading" data-rv-group="90">
           <p class="eyebrow">FLOWBEE FOR FREE</p>
           <h2 id="impact-title">免费调用，flowbee专属补贴</h2>
           <p>免费次数每分钟刷新，对于极高强度或高并发还有补贴额度支撑，调用顺序免费＞补贴</p>
         </div>
-        <div class="stats" aria-live="polite">
+        <div class="stats" aria-live="polite" data-rv-group="110">
           <article class="stat-card"><p class="stat-label">已免费提供</p><strong class="stat-number" id="free-tokens" data-target="5303716617">0</strong><span class="stat-unit">Tokens</span></article>
         </div>
-        <p class="stats-status">数字取自站内实际用量统计，会随大家的每一笔调用持续累加。</p>
+        <p class="stats-status" data-rv>数字取自站内实际用量统计，会随大家的每一笔调用持续累加。</p>
       </div>
     </section>
 
@@ -3010,12 +3254,12 @@
          计数器后缀（当前写作 /02）和第几页会自动跟上，不用改脚本。 -->
     <div class="container editorial-feature__outer">
       <section class="editorial-feature" aria-labelledby="feature-title" data-carousel>
-      <div class="editorial-feature__header">
+      <div class="editorial-feature__header" data-rv-group="90">
         <p class="eyebrow">A calmer way to connect</p>
         <h2 id="feature-title">让每一次调用，都有被认真接住的感觉。</h2>
       </div>
 
-      <div class="carousel__wrapper">
+      <div class="carousel__wrapper" data-rv>
         <div class="carousel__viewport">
           <ul class="carousel__track" data-carousel-track tabindex="0" role="group" aria-roledescription="轮播" aria-label="FlowBee 的特点" aria-live="polite">
             <li class="carousel__item" data-carousel-slide>
@@ -3047,7 +3291,7 @@
         </div>
       </div>
 
-      <div class="carousel__controls">
+      <div class="carousel__controls" data-rv-group="120">
         <p class="carousel__count"><span data-carousel-current>01</span><span class="carousel__sep">/</span><span>02</span></p>
         <div class="carousel__buttons">
           <button class="carousel__arrow carousel__arrow--prev" type="button" data-carousel-prev aria-label="上一页">
@@ -3067,7 +3311,7 @@
          名单独取不到时会保持隐藏，首页不显示空壳也不显示报错。 -->
     <section class="section backers" id="backers" hidden aria-labelledby="backers-title">
       <div class="container">
-        <div class="section-heading">
+        <div class="section-heading" data-rv-group="90">
           <p class="eyebrow">Backers</p>
           <h2 id="backers-title">被一群希望它继续开下去的人撑着</h2>
           <p>排名不分先后，金额不分大小，同等感谢。如果为你省了不少，你可以不定期赞助我们一下，多少都行，感谢您的支持。</p>
@@ -3094,8 +3338,8 @@
 
     <section class="section wishes" aria-labelledby="wish-title">
       <div class="container">
-        <div class="section-heading"><p class="eyebrow">Wish List</p><h2 id="wish-title">你希望 FlowBee 接下来实现什么？</h2><p>想要的模型、功能和体验，都可以留下。高频愿望会优先进入规划。</p></div>
-        <div class="wish-board">
+        <div class="section-heading" data-rv-group="90"><p class="eyebrow">Wish List</p><h2 id="wish-title">你希望 FlowBee 接下来实现什么？</h2><p>想要的模型、功能和体验，都可以留下。高频愿望会优先进入规划。</p></div>
+        <div class="wish-board" data-rv-group="130">
           <div class="wish-marquee" aria-label="社区愿望墙" aria-live="off">
             <!-- 直接增删或修改下面的 span，即可人工维护愿望内容。每行重复一遍用于无缝循环。 -->
             <div class="wish-track">
@@ -3124,11 +3368,11 @@
          直接衔接下面深色的 closing-cta。 -->
     <section class="qa" id="qa" aria-labelledby="qa-title">
       <div class="container qa__inner">
-        <div class="section-heading">
+        <div class="section-heading" data-rv-group="90">
           <h2 id="qa-title">你可能想问的</h2>
           <p>从接入到计费，最常被问到的几个问题都在这里。没找到答案，可以到愿望广场直接问我们。或直接加入QQ群。</p>
         </div>
-        <div class="qa__list">
+        <div class="qa__list" data-rv-group="60">
           <div class="qa-item">
             <input class="qa-item__input" type="checkbox" id="qa-1" name="qa">
             <label class="qa-item__label" for="qa-1">
@@ -3197,13 +3441,13 @@
         </div>
       </div>
     </section>
-    <section class="closing-cta" aria-labelledby="closing-title">
+    <section class="closing-cta" aria-labelledby="closing-title" data-rv-group="130">
       <h2 id="closing-title">准备好把下一次调用交给 FlowBee 了吗？</h2>
       <a class="closing-cta__button" href="https://flowbee.top/sign-in">进入 FlowBee <span aria-hidden="true">→</span></a>
     </section>
   </main>
   <footer>
-    <div class="container footer-inner">
+    <div class="container footer-inner" data-rv-group="110">
       <!-- 页脚品牌改用文字标志，不再放图片。
            原因：原来那张 logo 是「不透明米色底」的方形 PNG（1254×1254，无 alpha 通道），
            配上 .footer-brand img 的 filter 后整张图会被抹成纯白方块 ——
@@ -3721,9 +3965,53 @@
 
       /* 手机菜单现在铺满整屏，展开时要挡住下方页面并锁住滚动，
          否则手指在菜单上滑动会把背后的内容一起带着滚。 */
+      /* 收起动画：hidden 属性是瞬间生效的（display:none），一挂上去 CSS 动画就没机会播，
+         所以收起要先加 .is-closing 让它播完，再挂 hidden。
+         结束以 animationend 为准，另留一个兜底定时器防止事件没来。 */
+      var FOLD_FALLBACK_MS = 1200;
+      var mobileCloseTimer = null;
+      function finishMobileClose() {
+        if (mobileCloseTimer) { window.clearTimeout(mobileCloseTimer); mobileCloseTimer = null; }
+        if (!mobileMenu) return;
+        mobileMenu.classList.remove('is-closing');
+        mobileMenu.hidden = true;
+        if (mobileBackdrop) {
+          mobileBackdrop.classList.remove('is-closing');
+          mobileBackdrop.hidden = true;
+        }
+      }
+      function cancelMobileClose() {
+        if (mobileCloseTimer) { window.clearTimeout(mobileCloseTimer); mobileCloseTimer = null; }
+        if (mobileMenu) mobileMenu.classList.remove('is-closing');
+        if (mobileBackdrop) mobileBackdrop.classList.remove('is-closing');
+      }
+      if (mobileMenu) {
+        mobileMenu.addEventListener('animationend', function (event) {
+          if (event.target === mobileMenu && mobileMenu.classList.contains('is-closing')) finishMobileClose();
+        });
+      }
+
       function setMobile(open) {
-        if (mobileMenu) mobileMenu.hidden = !open;
-        if (mobileBackdrop) mobileBackdrop.hidden = !open;
+        if (mobileMenu) {
+          if (open) {
+            var wasClosing = mobileMenu.classList.contains('is-closing');
+            cancelMobileClose();
+            /* 收起还没播完就又被打开：先藏再显示、中间强制一次回流，让展开动画重播，
+               否则会从"半收起"直接跳回全展开，看着很别扭。 */
+            if (wasClosing) {
+              mobileMenu.hidden = true;
+              void mobileMenu.offsetWidth;
+            }
+            mobileMenu.hidden = false;
+            if (mobileBackdrop) mobileBackdrop.hidden = false;
+          } else if (!mobileMenu.hidden && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            mobileMenu.classList.add('is-closing');
+            if (mobileBackdrop) mobileBackdrop.classList.add('is-closing');
+            mobileCloseTimer = window.setTimeout(finishMobileClose, FOLD_FALLBACK_MS);
+          } else {
+            finishMobileClose();
+          }
+        }
         if (burger) burger.setAttribute('aria-expanded', open ? 'true' : 'false');
         if (burger) burger.setAttribute('aria-label', open ? '关闭菜单' : '展开菜单');
         document.body.classList.toggle('nav-locked', open);
@@ -3777,7 +4065,7 @@
       }
       if (burger) {
         burger.addEventListener('click', function () {
-          openFloating(!mobileMenu || mobileMenu.hidden ? 'mobile' : null);
+          openFloating(!mobileMenu || mobileMenu.hidden || mobileMenu.classList.contains('is-closing') ? 'mobile' : null);
         });
       }
       /* 点菜单外的遮罩就关掉菜单。 */
@@ -4000,6 +4288,46 @@
       img.addEventListener('error', update);
       img.addEventListener('load', update);
       if (img.complete) update();
+    })();
+  </script>
+  <script>
+    /* 入场动画的开关在 <head>，这里只负责"什么时候进场"。
+       分组（data-rv-group）的直接子元素按顺序错峰，延迟写进 --rv-delay；
+       单个元素（data-rv）不带延迟。进过视口就取消监听，往回翻不会再播一次。
+       rootMargin 往下收 8%，让动画在元素"确实露头"之后才起步，
+       而不是贴着视口下沿就开始 —— 那样往往还在屏幕外就播完了。 */
+    (function () {
+      if (!document.documentElement.classList.contains('reveal-ready')) return;
+      var groups = document.querySelectorAll('[data-rv-group]');
+      var singles = document.querySelectorAll('[data-rv]');
+      if (!groups.length && !singles.length) return;
+      /* 先把每一组内部的错峰延迟算好（延迟写进 --rv-delay，由 CSS 的动画用到）。 */
+      Array.prototype.forEach.call(groups, function (group) {
+        var step = parseFloat(group.getAttribute('data-rv-group')) || 70;
+        Array.prototype.forEach.call(group.children, function (el, i) {
+          el.style.setProperty('--rv-delay', (i * step) + 'ms');
+        });
+      });
+      /* 挂的是"容器"而不是容器里的每个子元素。按子元素挂会被视口下沿切开来：
+         同一段标题里，前两行进视口了、说明文字还差十几像素，就分成两批进场，
+         看着像卡了一下。挂容器则一进视口整组一起起跑，错峰干净。
+         rootMargin 往下收 8%：让动画在元素确实露头之后才起步，
+         贴着视口下沿就开始的话，往往还在屏幕外就播完了。 */
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          if (entry.target.hasAttribute('data-rv-group')) {
+            Array.prototype.forEach.call(entry.target.children, function (child) {
+              child.classList.add('is-in');
+            });
+          } else {
+            entry.target.classList.add('is-in');
+          }
+          io.unobserve(entry.target);
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.01 });
+      Array.prototype.forEach.call(groups, function (g) { io.observe(g); });
+      Array.prototype.forEach.call(singles, function (el) { io.observe(el); });
     })();
   </script>
 </body>
