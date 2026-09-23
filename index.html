@@ -7,8 +7,27 @@
   <title>FlowBee · 贴心服务，温暖接入</title>
   <link rel="icon" href="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEZxkFqjFfnBZM5o9Nv97y2PmMZr3TC9AAC_TMAAg-uYVRsP0CpUPcQPj0E.png">
   <style>
-    @font-face { font-family: "Noto Serif SC"; src: url("assets/fonts/noto-serif-sc.woff2") format("woff2"); font-style: normal; font-weight: 200 900; font-display: swap; }
-    @font-face { font-family: "Noto Sans SC"; src: url("assets/fonts/noto-sans-sc.woff2") format("woff2"); font-style: normal; font-weight: 100 900; font-display: swap; }
+    /* ============================================================
+    本样式表做过一次机械整理（合并重复选择器 + 统一排版），规则顺序未动。
+    · 同一选择器在同一媒体条件下只保留一条；
+    · 少数「不能合并」的重复保留原样，每条前面有 ⚠️ 注释说明原因 ——
+      那些是声明顺序承重的，改动时务必连同注释一起读。
+    ============================================================ */
+
+    @font-face {
+      font-family: "Noto Serif SC";
+      src: url("assets/fonts/noto-serif-sc.woff2") format("woff2");
+      font-style: normal;
+      font-weight: 200 900;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Noto Sans SC";
+      src: url("assets/fonts/noto-sans-sc.woff2") format("woff2");
+      font-style: normal;
+      font-weight: 100 900;
+      font-display: swap;
+    }
     /* ===== 设计令牌：取自 Anthropic 官网真实 CSS 变量（--swatch--* / --_typography--*）=====
        底色是象牙白（ivory）而非纯白，文字是暖调石板灰（slate）而非纯黑，
        全站只有一支暖色强调 —— 陶土橙（clay）。低饱和 + 低对比的组合，
@@ -17,23 +36,44 @@
     :host, :root {
       color-scheme: light;
       /* 底色 */
-      --ivory-light: #faf9f5; --ivory-medium: #f0eee6; --ivory-dark: #e8e6dc;
+      --ivory-light: #faf9f5;
+      --ivory-medium: #f0eee6;
+      --ivory-dark: #e8e6dc;
       /* 文字 */
-      --slate-dark: #141413; --slate-medium: #3d3d3a; --slate-light: #5e5d59;
-      --cloud-light: #d1cfc5; --cloud-medium: #b0aea5; --cloud-dark: #87867f;
+      --slate-dark: #141413;
+      --slate-medium: #3d3d3a;
+      --slate-light: #5e5d59;
+      --cloud-light: #d1cfc5;
+      --cloud-medium: #b0aea5;
+      --cloud-dark: #87867f;
       /* 强调：clay 陶土橙 */
-      --clay: #d97757; --clay-deep: #c6613f; --clay-soft: #f5e5df;
-      --kraft: #d4a27f; --oat: #e3dacc; --manilla: #ebdbbc;
+      --clay: #d97757;
+      --clay-deep: #c6613f;
+      --clay-soft: #f5e5df;
+      --kraft: #d4a27f;
+      --oat: #e3dacc;
+      --manilla: #ebdbbc;
       /* 语义色，也从 Anthropic 色板里取，避免引入体系外的颜色 */
-      --olive: #788c5d; --sky: #6a9bcc; --fig: #c46686; --cactus: #bcd1ca;
+      --olive: #788c5d;
+      --sky: #6a9bcc;
+      --fig: #c46686;
+      --cactus: #bcd1ca;
       /* 语义映射 */
-      --bg: var(--ivory-light); --warm: var(--ivory-medium); --surface: #fff;
-      --ink: var(--slate-dark); --muted: var(--slate-light); --line: #14141326;
-      --accent: var(--clay); --accent-deep: var(--clay-deep);
-      --accent-ink: #4a1b0c; --accent-soft: var(--clay-soft);
+      --bg: var(--ivory-light);
+      --warm: var(--ivory-medium);
+      --surface: #fff;
+      --ink: var(--slate-dark);
+      --muted: var(--slate-light);
+      --line: #14141326;
+      --accent: var(--clay);
+      --accent-deep: var(--clay-deep);
+      --accent-ink: #4a1b0c;
+      --accent-soft: var(--clay-soft);
       /* 尺度：Anthropic 用 0.0625rem 做统一描边、0.5rem 做主圆角 */
       --border-w: .0625rem;
-      --radius-sm: .25rem; --radius-md: .5rem; --radius-lg: 1rem;
+      --radius-sm: .25rem;
+      --radius-md: .5rem;
+      --radius-lg: 1rem;
       --container: 1180px;
       --ease: cubic-bezier(.16, 1, .3, 1);
       /* Self-hosted Chinese fonts, subset to this page; dynamic content uses system fallbacks. */
@@ -41,36 +81,90 @@
       --font-serif: "Noto Serif SC", "Songti SC", "SimSun", serif;
       font-family: var(--font-sans);
     }
-    :host { display: block; background: var(--bg); color: var(--ink); }
-    * { box-sizing: border-box; margin: 0; }
-    html { scroll-behavior: smooth; }
-    body { background: var(--bg); color: var(--ink); line-height: 1.4; font-size: 1.125rem; }
-    a { color: inherit; -webkit-tap-highlight-color: transparent; }
-    :focus-visible { outline: var(--border-w) solid var(--accent-deep); outline-offset: 3px; }
-    .container { width: min(100%, var(--container)); margin: 0 auto; padding-inline: 22px; }
-    .eyebrow { color: var(--accent-deep); font-size: .875rem; font-weight: 500; letter-spacing: .08em; text-transform: none; }
+    :host {
+      display: block;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    a {
+      color: inherit;
+      -webkit-tap-highlight-color: transparent;
+    }
+    :focus-visible {
+      outline: var(--border-w) solid var(--accent-deep);
+      outline-offset: 3px;
+    }
+    .container {
+      width: min(100%, var(--container));
+      margin: 0 auto;
+      padding-inline: 22px;
+    }
     /* 按钮：Anthropic 用 0.5rem 小圆角而不是药丸形，且主按钮不做渐变/外发光。
        之前那版渐变 + 投影 + 999px 药丸三个特征叠在一起，是"糖果感"的主要来源。 */
     /* 按钮高度对齐 anthropic.com 的 .btn_main_wrap：min-height 2.25rem(36px) + 内边距 .5rem 1rem + line-height 1。
        实测 Anthropic 官网按钮就是 36px 高，之前这里桌面端给到 54px，是它的 1.5 倍，视觉上就显得"胖"。 */
-    .button { min-height: 36px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: .5rem 1rem; border: var(--border-w) solid transparent; border-radius: var(--radius-md); font-family: inherit; font-size: .9375rem; font-weight: 500; line-height: 1; text-decoration: none; cursor: pointer; transition: background-color .2s var(--ease), border-color .2s var(--ease), color .2s var(--ease); touch-action: manipulation; }
-    .button-primary { background: var(--accent-deep); border-color: var(--accent-deep); color: var(--ivory-light); }
-    .button-primary:hover { background: var(--accent); border-color: var(--accent); }
-    .button-secondary { border-color: var(--line); background: transparent; color: var(--ink); }
-    .button-secondary:hover { background: var(--ivory-medium); border-color: var(--cloud-medium); }
-
+    /* ⚠️ 全表出现 2 次，不能合并为一条（顺序承重）：中间隔着 `.button-primary`，它声明了 border-color ↔ border，且会命中同一元素（如 body[1]/header[0]/div[0]/div[4]/div[1]/a[0]）。真正生效的是本组最后一次出现的声明，改前面那些位置是无效的。 */
+    .button {
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: .5rem 1rem;
+      border: var(--border-w) solid transparent;
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: .9375rem;
+      font-weight: 500;
+      line-height: 1;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color .2s var(--ease), border-color .2s var(--ease), color .2s var(--ease);
+      touch-action: manipulation;
+    }
+    /* ⚠️ 全表出现 2 次，不能合并为一条（顺序承重）：中间隔着 `.button`，它声明了 border-radius ↔ border-color，且会命中同一元素（如 body[1]/header[0]/div[0]/div[4]/div[1]/a[0]）。真正生效的是本组最后一次出现的声明，改前面那些位置是无效的。 */
+    .button-primary {
+      background: var(--accent-deep);
+      border-color: var(--accent-deep);
+      color: var(--ivory-light);
+    }
+    .button-primary:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .button-secondary {
+      border-color: var(--line);
+      background: transparent;
+      color: var(--ink);
+    }
+    .button-secondary:hover {
+      background: var(--ivory-medium);
+      border-color: var(--cloud-medium);
+    }
     /* ===== 导航栏 =====
        Anthropic 的做法：sticky 吸顶、半透明暖白底 + 毛玻璃、底部一道细描边，
        高度桌面 4.25rem / 移动 4.375rem（--nav--height）。
        原来这里是 position: absolute，滚下去导航就没了 —— sticky 才能一直够得着入口。 */
-    .site-nav { position: sticky; z-index: 1000; top: 0; left: 0; right: 0;
-      background: #faf9f5e6; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      border-bottom: var(--border-w) solid var(--line);
+    .nav-inner {
+      min-height: 4.375rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
     }
-    .nav-inner { min-height: 4.375rem; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-    .nav-brand { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); font-size: 1.0625rem; font-weight: 500; letter-spacing: -.01em; text-decoration: none; }
-    .nav-mark-img { width: 26px; height: 26px; border-radius: var(--radius-sm); object-fit: contain; }
-    .nav-links { display: none; align-items: center; gap: 26px; margin-left: auto; }
+    .nav-links {
+      display: none;
+      align-items: center;
+      gap: 26px;
+      margin-left: auto;
+    }
     /* 导航项用 detail-s（0.875rem）—— Anthropic 的界面文字都落在 detail 这一级，
        比正文小、比脚注大，是"看得清但不抢戏"的那一档。 */
     /* 悬停下划线，照 anthropic.com 顶部导航的做法：
@@ -81,39 +175,39 @@
          悬停  td-color: rgb(20,20,19)   ← 唯一变化的属性就是它，文字自身的 color 不动
        这里沿用同一套：--u 这个"恒等变量"是为了让"透明 → 当前色"能在 color 也跟着变的
        情况下自动跟随，不必把颜色写死两遍。 */
-    .nav-link {
-      --u: currentColor;
-      position: relative; color: var(--muted); font-size: .875rem; font-weight: 500;
-      text-decoration-line: underline;
-      text-decoration-color: transparent;
-      text-decoration-thickness: from-font;
-      text-underline-offset: 4px;
-      transition: color .2s var(--ease), text-decoration-color .2s var(--ease);
-    }
-    .nav-link:hover { color: var(--ink); text-decoration-color: var(--u); }
     /* ===== 「Try FlowBee」分体按钮 =====
        左边主体直接跳登录（原来的行为），右边箭头展开二级入口。
        这样"控制台"就不用再单独占导航栏一格了 —— 它收进菜单里当 API 入口。
        手机端整个按钮收起，改由汉堡菜单底部的两个按钮承担。 */
     .try-group {
-      position: relative; display: none; align-items: stretch; border-radius: var(--radius-md);
+      position: relative;
+      display: none;
+      align-items: stretch;
+      border-radius: var(--radius-md);
       background: var(--accent-deep);
       transition: background-color .2s var(--ease);
     }
-    .try-group:hover { background: var(--accent); }
+    /* ⚠️ 全表出现 3 次，不能合并为一条（顺序承重）：中间隔着 `.button, .try-main`，它声明了 min-height，且会命中同一元素（如 body[1]/header[0]/div[0]/div[2]/div[1]/a[0]）。真正生效的是本组最后一次出现的声明，改前面那些位置是无效的。 */
     .try-main {
-      display: inline-flex; align-items: center; min-height: 40px; padding: 8px 13px 8px 18px;
-      border-radius: var(--radius-md) 0 0 var(--radius-md); color: var(--ivory-light);
-      font-size: .875rem; font-weight: 500; text-decoration: none; white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      min-height: 40px;
+      padding: 8px 13px 8px 18px;
+      border-radius: var(--radius-md) 0 0 var(--radius-md);
+      color: var(--ivory-light);
+      font-size: .875rem;
+      font-weight: 500;
+      text-decoration: none;
+      white-space: nowrap;
     }
-    .try-toggle {
-      display: grid; place-items: center; width: 36px; padding: 0;
-      border: 0; border-left: var(--border-w) solid #faf9f540;
-      border-radius: 0 var(--radius-md) var(--radius-md) 0; background: transparent;
-      color: var(--ivory-light); cursor: pointer;
+    .try-toggle svg {
+      width: 13px;
+      height: 13px;
+      transition: transform .22s var(--ease);
     }
-    .try-toggle svg { width: 13px; height: 13px; transition: transform .22s var(--ease); }
-    .try-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+    .try-toggle[aria-expanded="true"] svg {
+      transform: rotate(180deg);
+    }
     /* 下拉菜单：整块照抄 anthropic.com 的 nav_dropdown_main_content / _main_scroll / nav_dropdown_list 三层结构。
        容器尺寸取自官网真实值 —— 主列 min/max-width 250px、padding 1.5rem、
        底色 ivory-light、圆角 1rem、三层渐进投影（官网是 00000003 / 00000005 / 0000000a 的叠加）。
@@ -123,48 +217,102 @@
        而是两块 —— ①多留了官网双列布局才需要的 flex-row + max-width:500px；②思源黑体字面比官网的拉丁无衬线宽。
        这里把布局收回单列、字号落到 .9375rem，整块收窄到约 272px。 */
     .try-menu {
-      position: absolute; z-index: 20; top: calc(100% + 10px); right: 0;
+      position: absolute;
+      z-index: 20;
+      top: calc(100% + 10px);
+      right: 0;
       display: block;
-      padding: 1.25rem; border: var(--border-w) solid var(--ivory-medium); border-radius: 1rem;
+      padding: 1.25rem;
+      border: var(--border-w) solid var(--ivory-medium);
+      border-radius: 1rem;
       background: var(--ivory-light);
       box-shadow: 0 2px 2px #00000003, 0 4px 4px #00000005, 0 16px 24px #0000000a;
       overflow: hidden;
     }
-    .try-menu[hidden] { display: none; }
+    .try-menu[hidden] {
+      display: none;
+    }
     /* 主列容器：对应官网的 nav_dropdown_main_scroll，负责竖排分组和列间距。 */
-    .try-menu-scroll { display: flex; flex-direction: column; align-items: stretch; min-width: 200px; max-width: 200px; gap: .5rem; }
-    .try-menu-list { list-style: none; margin: 0; padding: 0; }
+    .try-menu-scroll {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      min-width: 200px;
+      max-width: 200px;
+      gap: .5rem;
+    }
+    .try-menu-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
     /* 列标题：官网用 .u-detail-s.u-weight-medium.u-color-faded —— .875rem / 500 / 文字色 60% 混透明。
        margin-bottom 取 .5rem，和官网 --_spacing---space--2 一致。 */
-    .try-menu-label { margin: 0 0 .5rem; color: rgba(20, 20, 19, .6); font-size: .875rem; font-weight: 500; line-height: 1.3; }
+    .try-menu-label {
+      margin: 0 0 .5rem;
+      color: rgba(20, 20, 19, .6);
+      font-size: .875rem;
+      font-weight: 500;
+      line-height: 1.3;
+    }
     /* 分组之间的分隔线：官网放在 nav_dropdown_link_block 的上边框，并留 1rem 上间距。 */
-    .try-menu-group + .try-menu-group { margin-top: 1rem; padding-top: 1rem; border-top: var(--border-w) solid rgba(20, 20, 19, .06); }
+    .try-menu-group + .try-menu-group {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: var(--border-w) solid rgba(20, 20, 19, .06);
+    }
     /* 单项：官网 nav_dropdown_link 是 space-between + 上下 .125rem；悬停只加下划线、不换底色。
        字体换成全站已在用的思源宋体（--font-serif），和 hero 导语、各 section 标题同一支。
        宋体中文字面更宽，字号相应从 1rem 收到 .9375rem，避免既收窄又塞更宽的字。 */
-    .try-option { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .1875rem 0; color: var(--ink); font-family: var(--font-serif); font-size: .9375rem; line-height: 1.5; text-decoration: none; transition: color .12s var(--ease); }
-    .try-option:hover, .try-option:focus-visible { color: var(--slate-light); text-decoration: underline; text-underline-offset: .18em; }
+    .try-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .5rem;
+      padding: .1875rem 0;
+      color: var(--ink);
+      font-family: var(--font-serif);
+      font-size: .9375rem;
+      line-height: 1.5;
+      text-decoration: none;
+      transition: color .12s var(--ease);
+    }
+    .try-option:hover, .try-option:focus-visible {
+      color: var(--slate-light);
+      text-decoration: underline;
+      text-underline-offset: .18em;
+    }
     /* 外链角标：官网 nav_linkout_icon 只有 12px，且默认就在行内，不是悬停才浮现。 */
-    .try-option svg { flex: none; width: 12px; height: 12px; color: var(--slate-light); }
-
+    .try-option svg {
+      flex: none;
+      width: 12px;
+      height: 12px;
+      color: var(--slate-light);
+    }
     /* ===== 手机端汉堡菜单 =====
        小屏下导航项本来整排隐藏，这里补一个展开入口，展开后是竖排菜单
        加底部两个行动按钮（登录 API / 打开 Chat App）。
        图标改成 Anthropic 那种"三横线逐条变短"的写法（末条 1rem），
        比三条等长更有一点手工感，也是它家的识别特征之一。 */
     .nav-burger {
-      display: grid; place-items: center; width: 40px; height: 40px; padding: 0;
-      border: var(--border-w) solid var(--line); border-radius: var(--radius-md);
-      background: transparent; color: var(--ink); cursor: pointer;
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border: var(--border-w) solid var(--line);
+      border-radius: var(--radius-md);
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
       transition: background-color .2s var(--ease), border-color .2s var(--ease);
     }
-    .nav-burger:hover { background: var(--ivory-medium); }
-    .nav-burger[aria-expanded="true"] { border-color: var(--cloud-medium); color: var(--accent-deep); }
-    .nav-burger-icon { display: flex; flex-direction: column; align-items: flex-start; gap: .28rem; width: 22px; }
-    .nav-burger-icon span { display: block; width: 1.5rem; height: var(--border-w); border-radius: 100rem; background: currentColor; transition: all .2s ease; }
-    .nav-burger-icon span:last-child { width: 1rem; }
-    .nav-burger[aria-expanded="true"] .nav-burger-icon span:first-child { width: 1.25rem; }
-    .nav-burger[aria-expanded="true"] .nav-burger-icon span:last-child { width: 1.25rem; }
+    .nav-burger:hover {
+      background: var(--ivory-medium);
+    }
+    .nav-burger-icon span:last-child {
+      width: 1rem;
+    }
     /* 移动菜单铺满剩余视口高度（Anthropic 的 nav_menu_scroll 也是这么做的），
        并给顶部留出导航本身的高度，免得内容被吸顶栏压住。
 
@@ -174,174 +322,541 @@
        菜单会塌成一条 37px 高的缝。自己算高度就绕开了这个包含块。
        dvh 而不是 vh：移动端地址栏收起/展开时视口高度会变，vh 会算错。 */
     .mobile-menu {
-      position: fixed; z-index: 20; top: 4.375rem; left: 0; right: 0;
+      position: fixed;
+      z-index: 20;
+      top: 4.375rem;
+      left: 0;
+      right: 0;
       height: calc(100dvh - 4.375rem);
-      display: flex; flex-direction: column; gap: 14px; padding: 18px 22px calc(18px + env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 18px 22px calc(18px + env(safe-area-inset-bottom));
       border-top: var(--border-w) solid var(--ivory-medium);
-      background: var(--bg); overflow-y: auto; overscroll-behavior: contain;
+      background: var(--bg);
+      overflow-y: auto;
+      overscroll-behavior: contain;
     }
-    .mobile-menu[hidden] { display: none; }
+    .mobile-menu[hidden] {
+      display: none;
+    }
     /* 菜单铺满整屏后，下面那层页面需要挡住并锁滚动，否则滑动会滚到背后的内容。
        同样带 backdrop-filter，所以也自己算高度避开导航栏那个包含块。 */
-    .mobile-backdrop { position: fixed; z-index: 15; top: 0; left: 0; right: 0; height: 100dvh; background: #1414134d; -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
-    .mobile-backdrop[hidden] { display: none; }
-    body.nav-locked { overflow: hidden; }
-    .mobile-links { display: grid; gap: 2px; }
-    .mobile-link {
-      display: flex; align-items: center; min-height: 48px; padding-inline: 12px;
-      border-radius: var(--radius-md); color: var(--ink); font-size: 1.0625rem; font-weight: 500;
-      text-decoration: none; transition: background-color .18s var(--ease);
+    .mobile-backdrop[hidden] {
+      display: none;
     }
-    .mobile-link:hover { background: var(--ivory-medium); }
+    body.nav-locked {
+      overflow: hidden;
+    }
+    .mobile-link:hover {
+      background: var(--ivory-medium);
+    }
     /* .mobile-link 自己声明了 display:flex，会盖过 hidden 属性的默认 display:none，
        所以显式补一条，否则被站内关掉的项在手机菜单里藏不住。 */
-    .mobile-link[hidden] { display: none; }
-    .mobile-actions { display: grid; gap: 9px; margin-top: auto; padding-top: 14px; border-top: var(--border-w) solid var(--line); }
-    .mobile-actions .button { width: 100%; }
-    @media (min-width: 720px) {
-      .try-group { display: inline-flex; }
-      .nav-burger { display: none; }
-      .mobile-menu { display: none; }
+    .mobile-link[hidden] {
+      display: none;
     }
-
+    @media (min-width: 720px) {
+      .try-group {
+        display: inline-flex;
+      }
+      .nav-burger {
+        display: none;
+      }
+      .mobile-menu {
+        display: none;
+      }
+    }
     /* ===== 导航右侧：通知铃铛 + 登录 =====
        铃铛读站内两个公开接口（/api/notice 与 /api/status 的 announcements），
        跟站内右上角那个铃铛是同一份数据。未读状态存在访问者浏览器本地
        （localStorage），服务端不记 —— 跟站内行为一致。 */
-    .nav-actions { position: relative; display: flex; align-items: center; gap: 10px; }
     .nav-bell {
-      position: relative; display: grid; place-items: center; width: 40px; height: 40px;
-      padding: 0; border: var(--border-w) solid var(--line); border-radius: var(--radius-md);
-      background: transparent; color: var(--muted); cursor: pointer;
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border: var(--border-w) solid var(--line);
+      border-radius: var(--radius-md);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
       transition: color .2s var(--ease), background-color .2s var(--ease);
     }
-    .nav-bell:hover { color: var(--ink); background: var(--ivory-medium); }
-    .nav-bell-icon { width: 18px; height: 18px; }
-    .nav-bell-badge {
-      position: absolute; top: -4px; right: -4px; display: grid; place-items: center;
-      min-width: 18px; height: 18px; padding-inline: 5px;
-      border: 2px solid var(--bg); border-radius: 999px;
-      background: var(--clay-deep); color: var(--ivory-light);
-      font-size: 10px; font-weight: 500; line-height: 1; font-variant-numeric: tabular-nums;
+    .nav-bell:hover {
+      color: var(--ink);
+      background: var(--ivory-medium);
     }
-    .nav-bell-badge[hidden] { display: none; }
-
+    .nav-bell-icon {
+      width: 18px;
+      height: 18px;
+    }
+    .nav-bell-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      display: grid;
+      place-items: center;
+      min-width: 18px;
+      height: 18px;
+      padding-inline: 5px;
+      border: 2px solid var(--bg);
+      border-radius: 999px;
+      background: var(--clay-deep);
+      color: var(--ivory-light);
+      font-size: 10px;
+      font-weight: 500;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .nav-bell-badge[hidden] {
+      display: none;
+    }
     /* 通知面板：默认藏在导航栏里，点铃铛才展开。 */
     .notice-panel {
-      position: absolute; z-index: 20; top: calc(100% + 12px); right: 0;
-      width: min(24rem, calc(100vw - 44px)); padding: 16px;
-      border: var(--border-w) solid var(--line); border-radius: var(--radius-lg); background: var(--surface);
+      position: absolute;
+      z-index: 20;
+      top: calc(100% + 12px);
+      right: 0;
+      width: min(24rem, calc(100vw - 44px));
+      padding: 16px;
+      border: var(--border-w) solid var(--line);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
       box-shadow: 0 12px 32px #1414131f;
     }
-    .notice-panel[hidden] { display: none; }
-    .notice-title { font-size: .9375rem; font-weight: 500; }
-    .notice-sub { margin-top: 3px; color: var(--muted); font-size: .75rem; }
-    .notice-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 13px; padding: 4px; border-radius: var(--radius-md); background: var(--ivory-medium); }
-    .notice-tab { min-height: 34px; border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--muted); font-family: inherit; font-size: .8125rem; font-weight: 500; cursor: pointer; transition: background-color .18s var(--ease), color .18s var(--ease); }
-    .notice-tab.is-active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px #1414131f; }
-    .notice-body { max-height: min(52vh, 28rem); overflow-y: auto; margin-top: 12px; padding-right: 5px; }
-    .notice-empty { padding: 30px 8px; color: var(--muted); font-size: .8125rem; text-align: center; }
-    .notice-text { color: var(--ink); font-size: .9375rem; line-height: 1.6; overflow-wrap: anywhere; }
-    .notice-text a { color: var(--accent-deep); font-weight: 500; }
-    .notice-item { display: flex; gap: 10px; padding-block: 14px; }
-    .notice-item + .notice-item { border-top: var(--border-w) solid var(--line); }
-    .notice-dot { flex: none; width: 8px; height: 8px; margin-top: 7px; border-radius: 50%; background: var(--cloud-medium); }
-    .notice-dot--ongoing { background: var(--sky); }
-    .notice-dot--success { background: var(--olive); }
-    .notice-dot--warning { background: var(--kraft); }
-    .notice-dot--error { background: var(--clay-deep); }
-    .notice-main { min-width: 0; flex: 1; }
-    .notice-extra { margin-top: 8px; color: var(--muted); font-size: .75rem; line-height: 1.6; }
-    .notice-time { margin-top: 8px; color: var(--muted); font-size: .75rem; font-variant-numeric: tabular-nums; }
-    .notice-foot { display: flex; justify-content: flex-end; margin-top: 13px; }
-    .notice-foot .button { min-height: 36px; padding: 7px 18px; font-size: .8125rem; }
-
+    .notice-panel[hidden] {
+      display: none;
+    }
+    .notice-title {
+      font-size: .9375rem;
+      font-weight: 500;
+    }
+    .notice-sub {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: .75rem;
+    }
+    .notice-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      margin-top: 13px;
+      padding: 4px;
+      border-radius: var(--radius-md);
+      background: var(--ivory-medium);
+    }
+    .notice-tab {
+      min-height: 34px;
+      border: 0;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: .8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color .18s var(--ease), color .18s var(--ease);
+    }
+    .notice-tab.is-active {
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow: 0 1px 3px #1414131f;
+    }
+    .notice-body {
+      max-height: min(52vh, 28rem);
+      overflow-y: auto;
+      margin-top: 12px;
+      padding-right: 5px;
+    }
+    .notice-empty {
+      padding: 30px 8px;
+      color: var(--muted);
+      font-size: .8125rem;
+      text-align: center;
+    }
+    .notice-text {
+      color: var(--ink);
+      font-size: .9375rem;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+    .notice-text a {
+      color: var(--accent-deep);
+      font-weight: 500;
+    }
+    .notice-item {
+      display: flex;
+      gap: 10px;
+      padding-block: 14px;
+    }
+    .notice-item + .notice-item {
+      border-top: var(--border-w) solid var(--line);
+    }
+    .notice-dot {
+      flex: none;
+      width: 8px;
+      height: 8px;
+      margin-top: 7px;
+      border-radius: 50%;
+      background: var(--cloud-medium);
+    }
+    .notice-dot--ongoing {
+      background: var(--sky);
+    }
+    .notice-dot--success {
+      background: var(--olive);
+    }
+    .notice-dot--warning {
+      background: var(--kraft);
+    }
+    .notice-dot--error {
+      background: var(--clay-deep);
+    }
+    .notice-main {
+      min-width: 0;
+      flex: 1;
+    }
+    .notice-extra {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: .75rem;
+      line-height: 1.6;
+    }
+    .notice-time {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: .75rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .notice-foot {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 13px;
+    }
+    .notice-foot .button {
+      min-height: 36px;
+      padding: 7px 18px;
+      font-size: .8125rem;
+    }
     /* ===== Hero =====
        原来这里压了一层黄色径向渐变光晕 + 一段曲线路径动画。
        新版全部去掉：Anthropic 的首页就是"一大块暖白 + 大字号标题"，
        干净到几乎没有装饰。留白本身就是设计。 */
-    .hero { position: relative; overflow: hidden; display: grid; align-items: center; padding-block: 112px 88px; background: var(--ivory-medium); border-bottom: var(--border-w) solid var(--line); }
-    .hero-grid { position: relative; display: grid; gap: 48px; }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      align-items: center;
+      padding-block: 112px 88px;
+      background: var(--ivory-medium);
+      border-bottom: var(--border-w) solid var(--line);
+    }
+    /* ⚠️ 全表出现 3 次，不能合并为一条（顺序承重）：中间隔着 `.container` [@media (min-width: 1024px)]，它声明了 padding-inline，且会命中同一元素（如 body[1]/main[1]/section[0]/div[0]）。真正生效的是本组最后一次出现的声明，改前面那些位置是无效的。 */
+    .hero-grid {
+      position: relative;
+      display: grid;
+      gap: 48px;
+    }
     /* 标题走 display-xl（4rem）/ line-height 1.1，字重 500 —— Anthropic 的大标题
        不用 700 以上的重字重，靠字号和留白建立层级，这是它"温柔"的另一半原因。 */
-    .hero h1 { max-width: 11ch; margin-top: 18px; font-size: clamp(3.25rem, 8vw, 6.5rem); font-weight: 600; letter-spacing: -.045em; line-height: .98; text-wrap: balance; }
+    .hero h1 {
+      max-width: 11ch;
+      margin-top: 18px;
+      font-size: clamp(3.25rem, 8vw, 6.5rem);
+      font-weight: 600;
+      letter-spacing: -.045em;
+      line-height: .98;
+      text-wrap: balance;
+    }
     /* 导语改用衬线体（Anthropic Serif / 中文回退思源宋体），跟无衬线标题拉开对比，
        这是 Anthropic 很典型的一组搭配。 */
-    .hero-copy { max-width: 34ch; margin-top: 28px; color: var(--muted); font-family: var(--font-serif); font-size: clamp(1.125rem, 1.6vw, 1.35rem); font-weight: 400; line-height: 1.55; }
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
-    .hero-art { display: grid; place-items: center; position: relative; min-height: 300px; }
+    .hero-copy {
+      max-width: 34ch;
+      margin-top: 28px;
+      color: var(--muted);
+      font-family: var(--font-serif);
+      font-size: clamp(1.125rem, 1.6vw, 1.35rem);
+      font-weight: 400;
+      line-height: 1.55;
+    }
     /* API 旅程卡片：改成一张干净的暖白卡（ivory-light + 细描边），
        不再用径向光晕托底。 */
-    .api-journey { --pulse-mid: 132px; --pulse-end: 276px; position: relative; width: min(100%, 440px); min-height: 194px; padding: 24px 22px 22px; border: var(--border-w) solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
-    .journey-meta, .journey-url, .journey-response, .journey-route { position: relative; z-index: 1; }
-    .journey-meta { color: var(--muted); font-size: .8125rem; font-weight: 400; }
-    .journey-url { margin-top: 7px; font-size: clamp(1.25rem, 5vw, 1.75rem); font-weight: 500; letter-spacing: -.02em; white-space: nowrap; }
-    .journey-url span { color: var(--accent-deep); }
-    .journey-route { height: 78px; margin-top: 3px; }
-    .route-line { position: absolute; inset: 5px 0 0; width: 100%; height: 78px; overflow: visible; }
-    .route-line path { stroke: var(--cloud-medium); stroke-width: 1; fill: none; stroke-linecap: round; stroke-dasharray: 3 7; }
-    .route-stop { position: absolute; display: inline-flex; align-items: center; justify-content: center; min-height: 28px; padding-inline: 10px; border: var(--border-w) solid var(--line); border-radius: var(--radius-md); background: var(--ivory-medium); color: var(--slate-medium); font-size: .75rem; font-weight: 500; }
-    .route-start { left: 0; top: 45px; } .route-middle { left: 38%; top: 6px; } .route-end { right: 0; top: 47px; }
-    .route-pulse { position: absolute; left: 0; top: 52px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent-deep); }
-    .journey-response { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: .8125rem; font-weight: 400; }
-    .response-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-deep); }
-
-    .section { padding-block: 104px; }
-    .section-heading { max-width: 620px; margin-bottom: 32px; }
-    .section-heading h2 { margin-top: 12px; font-size: clamp(1.75rem, 3.4vw, 2.5rem); font-weight: 500; letter-spacing: -.02em; line-height: 1.15; text-wrap: balance; }
+    .journey-meta, .journey-url, .journey-response, .journey-route {
+      position: relative;
+      z-index: 1;
+    }
+    .journey-meta {
+      color: var(--muted);
+      font-size: .8125rem;
+      font-weight: 400;
+    }
+    .journey-url {
+      margin-top: 7px;
+      font-size: clamp(1.25rem, 5vw, 1.75rem);
+      font-weight: 500;
+      letter-spacing: -.02em;
+      white-space: nowrap;
+    }
+    .journey-url span {
+      color: var(--accent-deep);
+    }
+    .journey-route {
+      height: 78px;
+      margin-top: 3px;
+    }
+    .route-line {
+      position: absolute;
+      inset: 5px 0 0;
+      width: 100%;
+      height: 78px;
+      overflow: visible;
+    }
+    .route-line path {
+      stroke: var(--cloud-medium);
+      stroke-width: 1;
+      fill: none;
+      stroke-linecap: round;
+      stroke-dasharray: 3 7;
+    }
+    .route-stop {
+      position: absolute;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+      padding-inline: 10px;
+      border: var(--border-w) solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--ivory-medium);
+      color: var(--slate-medium);
+      font-size: .75rem;
+      font-weight: 500;
+    }
+    .route-start {
+      left: 0;
+      top: 45px;
+    }
+    .route-middle {
+      left: 38%;
+      top: 6px;
+    }
+    .route-end {
+      right: 0;
+      top: 47px;
+    }
+    .route-pulse {
+      position: absolute;
+      left: 0;
+      top: 52px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--accent-deep);
+    }
+    .journey-response {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+      font-size: .8125rem;
+      font-weight: 400;
+    }
+    .response-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-deep);
+    }
+    /* ⚠️ 全表出现 3 次，不能合并为一条（顺序承重）：中间隔着 `.impact`，它声明了 padding-top ↔ padding-block，且会命中同一元素（如 body[1]/main[1]/section[5]）。真正生效的是本组最后一次出现的声明，改前面那些位置是无效的。 */
+    .section {
+      padding-block: 104px;
+    }
     /* ⚠️ 这条是无条件规则（不在任何 @media 内，跑遍所有宽度），
        而它排在文件更下面，所以会**盖掉** 684 行那条 `.section-heading p { color: var(--muted) }`
        之外的一切字体设置 —— 这就是「.section-heading 里的 p 累积了 4 版互相打架的规则」的源头。
        现在把它当作窄屏兜底：字号改 16px（原来 1.0625rem = 17px，比正文的 16px 还大，
        这是 eyebrow 在桌面端被放大到 17px 的直接原因）。
        桌面端的覆盖写在下面 ~470 行，必须用同级别或更高的选择器才压得住。 */
-    .section-heading p { max-width: 48ch; margin-top: 14px; color: var(--muted); font-size: 1.0625rem; line-height: 1.6; }
-
-    .impact { padding-top: 12px; }
-    .stats { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding-block: 24px; border-top: var(--border-w) solid var(--line); border-bottom: var(--border-w) solid var(--line); }
-    .stat-card { position: relative; min-width: 0; padding: 3px 10px 5px; }
-    .stat-card::after { content: ""; position: absolute; left: 50%; top: 48px; width: 17px; height: 17px; border: var(--border-w) solid var(--accent); border-radius: 50%; opacity: 0; pointer-events: none; transform: translateX(-50%) scale(.45); }
-    .stat-label { color: var(--muted); font-size: clamp(.75rem, 3vw, .875rem); font-weight: 400; white-space: nowrap; }
-    .stat-number { display: block; margin-top: 12px; font-size: clamp(1.5rem, 5.6vw, 3.25rem); font-variant-numeric: tabular-nums; font-weight: 500; line-height: 1.1; letter-spacing: -.02em; white-space: nowrap; }
-    .stat-unit { display: block; margin-top: 8px; color: var(--accent-deep); font-size: clamp(.6875rem, 2.4vw, .875rem); font-weight: 500; letter-spacing: .04em; white-space: nowrap; }
-    .stat-note { display: none; }
-    .stats-status { margin-top: 18px; color: var(--muted); font-size: .875rem; }
-
+    /* ⚠️ 全表出现 2 次，不能合并为一条（顺序承重）：中间隔着 `.section` [@media (min-width: 1024px)]，它声明了 padding-block ↔ padding-top，且会命中同一元素（如 body[1]/main[1]/section[5]）。真正生效的是本组最后一次出现的声明，改前面那些位置是无效的。 */
+    .impact {
+      padding-top: 12px;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+      padding-block: 24px;
+      border-top: var(--border-w) solid var(--line);
+      border-bottom: var(--border-w) solid var(--line);
+    }
+    .stat-card {
+      position: relative;
+      min-width: 0;
+      padding: 3px 10px 5px;
+    }
+    .stat-card::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 48px;
+      width: 17px;
+      height: 17px;
+      border: var(--border-w) solid var(--accent);
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-50%) scale(.45);
+    }
+    .stat-label {
+      color: var(--muted);
+      font-size: clamp(.75rem, 3vw, .875rem);
+      font-weight: 400;
+      white-space: nowrap;
+    }
+    .stat-unit {
+      display: block;
+      margin-top: 8px;
+      color: var(--accent-deep);
+      font-size: clamp(.6875rem, 2.4vw, .875rem);
+      font-weight: 500;
+      letter-spacing: .04em;
+      white-space: nowrap;
+    }
+    .stat-note {
+      display: none;
+    }
+    .stats-status {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: .875rem;
+    }
     /* 额度补给条：原来是一条横向渐变，改成实心暖色块，扁平一些。 */
-    .support { padding-block: 36px; background: var(--ivory-medium); }
-    .support-panel { display: grid; gap: 22px; padding-block: 30px; }
-    .support-panel h2 { margin-top: 10px; font-size: clamp(1.625rem, 3.4vw, 2.375rem); font-weight: 500; line-height: 1.15; letter-spacing: -.02em; }
-    .support-panel p { max-width: 52ch; margin-top: 14px; color: var(--muted); }
-    .support-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-    .support-hint { max-width: 30ch; color: var(--muted); font-size: .8125rem; }
-
-    .wishes { padding-bottom: 96px; overflow: hidden; }
-    .wish-board { display: grid; gap: 20px; }
-    .wish-marquee { position: relative; display: grid; gap: 10px; overflow: hidden; padding-block: 8px; mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
-    .wish-track { display: flex; width: max-content; gap: 10px; will-change: transform; animation: drift 34s linear infinite; }
-    .wish-track--reverse { animation-direction: reverse; animation-duration: 39s; }
-    .wish-marquee:hover .wish-track, .wish-marquee:focus-within .wish-track { animation-play-state: paused; }
+    .support {
+      padding-block: 36px;
+      background: var(--ivory-medium);
+    }
+    .support-panel {
+      display: grid;
+      gap: 22px;
+      padding-block: 30px;
+    }
+    .support-panel h2 {
+      margin-top: 10px;
+      font-size: clamp(1.625rem, 3.4vw, 2.375rem);
+      font-weight: 500;
+      line-height: 1.15;
+      letter-spacing: -.02em;
+    }
+    .support-panel p {
+      max-width: 52ch;
+      margin-top: 14px;
+      color: var(--muted);
+    }
+    .support-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+    .support-hint {
+      max-width: 30ch;
+      color: var(--muted);
+      font-size: .8125rem;
+    }
+    /* ⚠️ 全表出现 2 次，不能合并为一条（顺序承重）：中间隔着 `.section` [@media (min-width: 1024px)]，它声明了 padding-block ↔ padding-bottom，且会命中同一元素（如 body[1]/main[1]/section[8]）。真正生效的是本组最后一次出现的声明，改前面那些位置是无效的。 */
+    .wishes {
+      padding-bottom: 96px;
+      overflow: hidden;
+    }
+    .wish-marquee {
+      position: relative;
+      display: grid;
+      gap: 10px;
+      overflow: hidden;
+      padding-block: 8px;
+      mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+    }
+    .wish-track {
+      display: flex;
+      width: max-content;
+      gap: 10px;
+      will-change: transform;
+      animation: drift 34s linear infinite;
+    }
+    .wish-track--reverse {
+      animation-direction: reverse;
+      animation-duration: 39s;
+    }
+    .wish-marquee:hover .wish-track, .wish-marquee:focus-within .wish-track {
+      animation-play-state: paused;
+    }
     /* 愿望胶囊：去掉投影和"愿望"前缀里的彩色，改素净的暖白卡 + 细描边。 */
-    .wish { flex: 0 0 auto; display: inline-flex; align-items: center; min-height: 43px; padding: 10px 16px; border: var(--border-w) solid var(--line); border-radius: var(--radius-md); background: var(--surface); color: var(--slate-medium); font-size: .9375rem; font-weight: 400; white-space: nowrap; }
-    .wish::before { content: "愿望"; margin-right: 8px; color: var(--cloud-dark); font-size: .75rem; font-weight: 400; }
+    .wish {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      min-height: 43px;
+      padding: 10px 16px;
+      border: var(--border-w) solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      color: var(--slate-medium);
+      font-size: .9375rem;
+      font-weight: 400;
+      white-space: nowrap;
+    }
+    .wish::before {
+      content: "愿望";
+      margin-right: 8px;
+      color: var(--cloud-dark);
+      font-size: .75rem;
+      font-weight: 400;
+    }
     /* 许愿入口卡：原来是一张贴歪的"便签 + 胶带 + 硬阴影"，很活泼但跟温柔不搭。
        现在收敛成一张规整的陶土色卡片，靠底色区分主次。 */
-    .wish-cta { position: relative; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 18px; min-height: 166px; padding: 26px; border: var(--border-w) solid var(--clay); border-radius: var(--radius-lg); background: var(--clay-soft); color: var(--accent-ink); text-decoration: none; transition: background-color .25s var(--ease); }
-    .wish-cta:hover { background: #f0d8ce; }
-    .wish-cta h3 { margin-top: 8px; font-size: clamp(1.5rem, 3.4vw, 2rem); font-weight: 500; letter-spacing: -.02em; }
-    .wish-cta p { margin-top: 6px; color: #6b4a3d; font-size: .9375rem; }
-    .wish-cta .send { display: grid; place-items: center; width: 48px; height: 48px; border-radius: var(--radius-md); background: var(--accent-deep); color: var(--ivory-light); font-size: 1.25rem; transition: background-color .2s var(--ease); }
-    .wish-cta:hover .send { background: var(--clay); }
-    @keyframes drift { to { transform: translateX(-50%); } }
-
+    .wish-cta {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 18px;
+      min-height: 166px;
+      padding: 26px;
+      border: var(--border-w) solid var(--clay);
+      border-radius: var(--radius-lg);
+      background: var(--clay-soft);
+      color: var(--accent-ink);
+      text-decoration: none;
+      transition: background-color .25s var(--ease);
+    }
+    .wish-cta:hover {
+      background: #f0d8ce;
+    }
+    .wish-cta:hover .send {
+      background: var(--clay);
+    }
+    @keyframes drift {
+      to {
+        transform: translateX(-50%);
+      }
+    }
     /* ===== 支持者气泡墙 =====
        数据来自站内公开接口 /api/sponsors（同源，见页尾脚本）。气泡的圆角、
        底色、称号配色与头像取色都沿用了站内 /sponsors 页那套，所以同一个人
        在首页和站内是同一个颜色 —— 两边对不上会显得像两个站。
        形状是长条而不是方块：宽度由内容决定、高度只由行数决定，寄语长短不同
        气泡就长一截或短一截，但始终是薄薄一条。 */
-    .backers { padding-top: 8px; }
-    .bubble-wall { display: flex; flex-direction: column; gap: 10px; }
+    .backers {
+      padding-top: 8px;
+    }
+    .bubble-wall {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
     .bubble-row {
       overflow: hidden;
       padding-block: 6px;
@@ -363,13 +878,18 @@
       padding-right: var(--gap, 18px);
     }
     @keyframes bubble-drift {
-      from { transform: translateX(0); }
-      to { transform: translateX(-50%); }
+      from {
+        transform: translateX(0);
+      }
+      to {
+        transform: translateX(-50%);
+      }
     }
     /* 悬停与键盘聚焦暂停：气泡里是名字和寄语，一直在动的目标读不了。 */
     .bubble-wall:hover .bubble-track,
-    .bubble-wall:focus-within .bubble-track { animation-play-state: paused; }
-
+    .bubble-wall:focus-within .bubble-track {
+      animation-play-state: paused;
+    }
     .bubble {
       display: flex;
       flex: none;
@@ -394,8 +914,15 @@
       font-size: .75rem;
       font-weight: 500;
     }
-    .bubble-body { min-width: 0; }
-    .bubble-head { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; }
+    .bubble-body {
+      min-width: 0;
+    }
+    .bubble-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 2px 6px;
+    }
     .bubble-name {
       overflow: hidden;
       color: var(--slate-dark);
@@ -415,8 +942,16 @@
       white-space: nowrap;
     }
     /* 徽章配色取自 Anthropic 色板里的 manilla 与 cactus，不再用自成一套的棕绿。 */
-    .bubble-badge--early { border-color: var(--manilla); background: #f7f0e2; color: #7a5a1e; }
-    .bubble-badge--ongoing { border-color: var(--cactus); background: #e8f0ed; color: #3f5f55; }
+    .bubble-badge--early {
+      border-color: var(--manilla);
+      background: #f7f0e2;
+      color: #7a5a1e;
+    }
+    .bubble-badge--ongoing {
+      border-color: var(--cactus);
+      background: #e8f0ed;
+      color: #3f5f55;
+    }
     .bubble-msg {
       display: -webkit-box;
       overflow: hidden;
@@ -428,7 +963,9 @@
       -webkit-line-clamp: 2;
     }
     /* 名单为空时只留入口，不留一个空壳墙。 */
-    .bubble-wall[hidden] { display: none; }
+    .bubble-wall[hidden] {
+      display: none;
+    }
     .backers-actions {
       display: flex;
       flex-wrap: wrap;
@@ -436,55 +973,290 @@
       gap: 14px;
       margin-top: 28px;
     }
-    .backers-hint { max-width: 34ch; color: var(--muted); font-size: .8125rem; }
-
-    /* 数字由页尾内联脚本按各 .stat-number 的 data-target 动画，并用 toLocaleString 加千位分隔符渲染。 */
-    @media (prefers-reduced-motion: no-preference) { .stat-card::after { animation: token-ripple .85s .64s var(--ease) both; } @keyframes token-ripple { 0% { opacity: .58; transform: translateX(-50%) scale(.45); } 100% { opacity: 0; transform: translateX(-50%) scale(4.2); } } }
-
-    footer { border-top: var(--border-w) solid var(--line); background: var(--slate-dark); color: var(--ivory-light); }
-    .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px 32px; padding-block: 40px; color: var(--muted); font-size: .8125rem; }
-    .footer-brand { display: flex; align-items: center; gap: 12px; }
-    /* 页脚不再有 <img>，原先的 .footer-brand img { width:auto; height:28px } 已删。 */
-    .footer-brand p { margin: 0; max-width: 46ch; line-height: 1.6; }
-    .footer-links { display: flex; flex-wrap: wrap; gap: 10px 22px; }
-    .footer-links a { color: #d1cfc5; font-weight: 400; text-decoration: none; transition: color .2s var(--ease); }
-    .footer-links a:hover { color: var(--ivory-light); }
-    .footer-brand p { color: #b0aea5; }
-
-    @media (min-width: 720px) { .nav-inner { min-height: 4.25rem; } .nav-links { display: flex; } .support-panel { padding-block: 42px; } .wish-cta { min-height: 180px; padding: 34px; } .button { min-height: 40px; } }
-    @media (min-width: 1024px) { .container { padding-inline: 40px; } .hero { padding-block: 112px 72px; } .hero-grid { grid-template-columns: 1.12fr .88fr; align-items: center; } .hero-art { min-height: 310px; } .api-journey { --pulse-mid: 160px; --pulse-end: 340px; min-height: 230px; padding: 28px 26px 18px; } .section { padding-block: 104px; } .impact { padding-top: 25px; } .support-panel { grid-template-columns: 1fr auto; align-items: center; } .stat-card { padding-inline: 20px; } }
-    @media (prefers-reduced-motion: no-preference) {
-      .hero-content { animation: rise .7s var(--ease) both; } .hero-art { animation: rise .8s .12s var(--ease) both; } .route-pulse { animation: request-travel 4.2s 1.1s var(--ease) infinite; } .response-dot { animation: response-glow 4.2s 2.5s var(--ease) infinite; }
-      .stat-card { animation: rise .6s var(--ease) both; }
-      @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-      @keyframes request-travel { 0%, 10% { transform: translate(0, 0); opacity: 0; } 18% { opacity: 1; } 38% { transform: translate(var(--pulse-mid), -44px); } 60% { transform: translate(var(--pulse-end), 3px); opacity: 1; } 70%, 100% { transform: translate(var(--pulse-end), 3px); opacity: 0; } }
-      @keyframes response-glow { 0%, 58% { transform: scale(.72); opacity: .5; } 67% { transform: scale(1.35); opacity: 1; } 78%, 100% { transform: scale(1); opacity: 1; } }
+    .backers-hint {
+      max-width: 34ch;
+      color: var(--muted);
+      font-size: .8125rem;
     }
-    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
-
+    /* 数字由页尾内联脚本按各 .stat-number 的 data-target 动画，并用 toLocaleString 加千位分隔符渲染。 */
+    @media (prefers-reduced-motion: no-preference) {
+      .stat-card::after {
+        animation: token-ripple .85s .64s var(--ease) both;
+      }
+      @keyframes token-ripple {
+        0% {
+          opacity: .58;
+          transform: translateX(-50%) scale(.45);
+        }
+        100% {
+          opacity: 0;
+          transform: translateX(-50%) scale(4.2);
+        }
+      }
+    }
+    /* ⚠️ 全表出现 2 次，不能合并为一条（顺序承重）：中间隔着 `.container` [@media (min-width: 1024px)]，它声明了 padding-inline ↔ padding-block，且会命中同一元素（如 body[1]/footer[2]/div[0]）。真正生效的是本组最后一次出现的声明，改前面那些位置是无效的。 */
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px 32px;
+      padding-block: 40px;
+      color: var(--muted);
+      font-size: .8125rem;
+    }
+    /* 页脚不再有 <img>，原先的 .footer-brand img { width:auto; height:28px } 已删。 */
+    .footer-links a {
+      color: #d1cfc5;
+      font-weight: 400;
+      text-decoration: none;
+      transition: color .2s var(--ease);
+    }
+    .footer-links a:hover {
+      color: var(--ivory-light);
+    }
+    .footer-brand p {
+      margin: 0;
+      max-width: 46ch;
+      line-height: 1.6;
+      color: #b0aea5;
+    }
+    @media (min-width: 720px) {
+      .nav-inner {
+        min-height: 4.25rem;
+      }
+      .nav-links {
+        display: flex;
+      }
+      .support-panel {
+        padding-block: 42px;
+      }
+      .wish-cta {
+        min-height: 180px;
+        padding: 34px;
+      }
+      .button {
+        min-height: 40px;
+      }
+    }
+    @media (min-width: 1024px) {
+      .container {
+        padding-inline: 40px;
+      }
+      .hero {
+        padding-block: 112px 72px;
+      }
+      .hero-grid {
+        grid-template-columns: 1.12fr .88fr;
+        align-items: center;
+      }
+      .hero-art {
+        min-height: 310px;
+      }
+      .api-journey {
+        --pulse-mid: 160px;
+        --pulse-end: 340px;
+        min-height: 230px;
+        padding: 28px 26px 18px;
+      }
+      .section {
+        padding-block: 104px;
+      }
+      .impact {
+        padding-top: 25px;
+      }
+      .support-panel {
+        grid-template-columns: 1fr auto;
+        align-items: center;
+      }
+      .stat-card {
+        padding-inline: 20px;
+      }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .hero-content {
+        animation: rise .7s var(--ease) both;
+      }
+      .hero-art {
+        animation: rise .8s .12s var(--ease) both;
+      }
+      .route-pulse {
+        animation: request-travel 4.2s 1.1s var(--ease) infinite;
+      }
+      .response-dot {
+        animation: response-glow 4.2s 2.5s var(--ease) infinite;
+      }
+      .stat-card {
+        animation: rise .6s var(--ease) both;
+      }
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(18px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes request-travel {
+        0%, 10% {
+          transform: translate(0, 0);
+          opacity: 0;
+        }
+        18% {
+          opacity: 1;
+        }
+        38% {
+          transform: translate(var(--pulse-mid), -44px);
+        }
+        60% {
+          transform: translate(var(--pulse-end), 3px);
+          opacity: 1;
+        }
+        70%, 100% {
+          transform: translate(var(--pulse-end), 3px);
+          opacity: 0;
+        }
+      }
+      @keyframes response-glow {
+        0%, 58% {
+          transform: scale(.72);
+          opacity: .5;
+        }
+        67% {
+          transform: scale(1.35);
+          opacity: 1;
+        }
+        78%, 100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
     /* Editorial system: oversized type, asymmetric columns, quiet rules, and tactile color blocks. */
-    body { background: var(--ivory-light); }
-    .site-nav { background: rgba(250,249,245,.94); border-bottom-color: #1414131f; }
-    .nav-inner { max-width: 1512px; min-height: 76px; padding-inline: clamp(24px, 5vw, 80px); }
-    .nav-brand { font-size: 1.35rem; font-weight: 700; letter-spacing: -.04em; text-transform: uppercase; }
-    .nav-mark-img { display: none; }
-    .nav-links { gap: 34px; }
-    .nav-link { color: var(--ink); font-size: 1rem; font-weight: 500; }
-    .try-group { border-radius: 10px; background: var(--ink); }
-    .try-main { min-height: 38px; padding: 8px 16px; font-size: 14px; }
-    .hero { min-height: 660px; padding-block: 120px 110px; background: var(--ivory-light); border-bottom: 0; }
-    .hero-grid { width: min(100%, 1512px); grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: clamp(48px, 8vw, 150px); padding-inline: clamp(24px, 5vw, 80px); }
-    .hero h1 { max-width: 8ch; font-size: clamp(4rem, 7.4vw, 7rem); line-height: .92; letter-spacing: -.065em; }
-    .hero-copy { max-width: 31ch; margin-top: 30px; color: var(--ink); font-size: clamp(1.35rem, 2vw, 1.85rem); line-height: 1.34; font-weight: 500; }
-    .eyebrow { color: var(--ink); font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; }
-    .hero-actions { margin-top: 34px; }
-    .button { border-radius: 10px; min-height: 38px; padding-inline: 18px; font-size: .9375rem; }
-    .button-primary { background: var(--ink); border-color: var(--ink); }
-    .hero-art { min-height: 390px; align-self: stretch; padding: 34px; border-radius: 28px; background: var(--sky); }
-    .hero-art::before { content: "FLOWBEE / 2026"; position: absolute; top: 26px; left: 32px; color: rgba(20,20,19,.7); font: 500 .75rem/1 var(--font-sans); letter-spacing: .13em; }
-    .hero-art::after { content: ""; position: absolute; width: 150px; height: 150px; right: 12%; bottom: 10%; border: 3px solid var(--ink); border-radius: 50%; opacity: .92; }
-    .api-journey { z-index: 1; width: min(100%, 460px); margin-top: 64px; border: 0; border-radius: 16px; background: var(--ivory-light); box-shadow: 0 18px 0 rgba(20,20,19,.13); }
-    .section { width: min(100%, 1512px); margin-inline: auto; padding: 124px clamp(24px, 5vw, 80px); }
+    .nav-inner {
+      max-width: 1512px;
+      min-height: 76px;
+      padding-inline: clamp(24px, 5vw, 80px);
+    }
+    .nav-links {
+      gap: 34px;
+    }
+    .try-group {
+      border-radius: 10px;
+      background: var(--ink);
+    }
+    /* ⚠️ 全表出现 3 次，不能合并为一条（顺序承重）：中间隔着 `.button, .try-main`，它声明了 min-height，且会命中同一元素（如 body[1]/header[0]/div[0]/div[2]/div[1]/a[0]）。真正生效的是本组最后一次出现的声明，改前面那些位置是无效的。 */
+    .try-main {
+      min-height: 38px;
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+    .hero {
+      min-height: 660px;
+      padding-block: 120px 110px;
+      background: var(--ivory-light);
+      border-bottom: 0;
+    }
+    /* ⚠️ 全表出现 3 次，不能合并为一条（顺序承重）：中间隔着 `.container` [@media (min-width: 1024px)]，它声明了 padding-inline，且会命中同一元素（如 body[1]/main[1]/section[0]/div[0]）。真正生效的是本组最后一次出现的声明，改前面那些位置是无效的。 */
+    .hero-grid {
+      width: min(100%, 1512px);
+      grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+      gap: clamp(48px, 8vw, 150px);
+      padding-inline: clamp(24px, 5vw, 80px);
+    }
+    .hero h1 {
+      max-width: 8ch;
+      font-size: clamp(4rem, 7.4vw, 7rem);
+      line-height: .92;
+      letter-spacing: -.065em;
+    }
+    .hero-copy {
+      max-width: 31ch;
+      margin-top: 30px;
+      color: var(--ink);
+      font-size: clamp(1.35rem, 2vw, 1.85rem);
+      line-height: 1.34;
+      font-weight: 500;
+    }
+    .eyebrow {
+      color: var(--ink);
+      font-size: .78rem;
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .button {
+      border-radius: 10px;
+      min-height: 38px;
+      padding-inline: 18px;
+      font-size: .9375rem;
+    }
+    .button-primary {
+      background: var(--ink);
+      border-color: var(--ink);
+    }
+    .hero-art {
+      display: grid;
+      place-items: center;
+      position: relative;
+      min-height: 390px;
+      align-self: stretch;
+      padding: 34px;
+      border-radius: 28px;
+      background: var(--sky);
+    }
+    .hero-art::before {
+      content: "FLOWBEE / 2026";
+      position: absolute;
+      top: 26px;
+      left: 32px;
+      color: rgba(20,20,19,.7);
+      font: 500 .75rem/1 var(--font-sans);
+      letter-spacing: .13em;
+    }
+    .hero-art::after {
+      content: "";
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      right: 12%;
+      bottom: 10%;
+      border: 3px solid var(--ink);
+      border-radius: 50%;
+      opacity: .92;
+    }
+    .api-journey {
+      --pulse-mid: 132px;
+      --pulse-end: 276px;
+      position: relative;
+      width: min(100%, 460px);
+      min-height: 194px;
+      padding: 24px 22px 22px;
+      border: 0;
+      border-radius: 16px;
+      background: var(--ivory-light);
+      z-index: 1;
+      margin-top: 64px;
+      box-shadow: 0 18px 0 rgba(20,20,19,.13);
+    }
+    /* ⚠️ 全表出现 3 次，不能合并为一条（顺序承重）：中间隔着 `.impact`，它声明了 padding-top ↔ padding-block，且会命中同一元素（如 body[1]/main[1]/section[5]）。真正生效的是本组最后一次出现的声明，改前面那些位置是无效的。 */
+    .section {
+      width: min(100%, 1512px);
+      margin-inline: auto;
+      padding: 124px clamp(24px, 5vw, 80px);
+    }
     /* ⚠️ 这个文件里同一条 HTML 结构（.section-heading > p）累积了 4 版互相打架的规则，
        分别写在 277 / 470 / 473 / 671 行。带 !important 的 letter-spacing 规则写在 603 行，
        它站在全文件最前面，**后面的规则一律改不动字距**，所以别再指望往这儿加 letter-spacing。
@@ -497,21 +1269,70 @@
        字重同理：中文字形在 15~16px 下 400 会发虚，全站正文统一 500；
        要强调就靠字号和字体（衬线/黑体）分档，不要靠 400/500 这一级的字重差 ——
        Noto Sans SC 是可变字体，400→500 这条插值极浅，中文字上几乎看不出来。 */
-    .section-heading { max-width: 620px; }
-    .section-heading h2 { font-size: clamp(2.6rem, 5vw, 4.8rem); line-height: .98; letter-spacing: -.055em; font-weight: 600; }
-    .section-heading p { font-family: var(--font-serif); color: var(--ink); font-size: 1.25rem; line-height: 1.45; }
-    .impact { border-top: 1px solid #14141326; }
-    .stats { grid-template-columns: 1fr 1fr; gap: 0; padding-block: 44px; }
-    .stat-card { padding: 8px 24px; border-right: 1px solid #14141326; }
-    .stat-number { font-size: clamp(2.8rem, 6vw, 5.8rem); letter-spacing: -.06em; }
-    .wishes { border-top: 1px solid #14141326; }
-    .wish-board { grid-template-columns: 1fr .7fr; align-items: stretch; gap: 48px; }
-    .wish-cta { min-height: 270px; border: 0; border-radius: 22px; background: var(--oat); color: var(--ink); }
-    .wish-cta h3 { font-size: clamp(2.2rem, 4vw, 3.8rem); font-weight: 600; letter-spacing: -.06em; }
-    .wish-cta .send { width: 56px; height: 56px; border-radius: 50%; background: var(--ink); }
-    footer { background: var(--ink); }
-    .footer-inner { width: min(100%, 1512px); margin-inline: auto; padding: 88px clamp(24px, 5vw, 80px) 42px; align-items: flex-start; }
-    .footer-brand { align-items: flex-start; flex-direction: column; gap: 20px; }
+    .section-heading h2 {
+      margin-top: 12px;
+      font-size: clamp(2.6rem, 5vw, 4.8rem);
+      font-weight: 600;
+      letter-spacing: -.055em;
+      line-height: .98;
+      text-wrap: balance;
+    }
+    .impact {
+      border-top: 1px solid #14141326;
+    }
+    .stats {
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      padding-block: 44px;
+    }
+    .stat-card {
+      padding: 8px 24px;
+      border-right: 1px solid #14141326;
+    }
+    .wishes {
+      border-top: 1px solid #14141326;
+    }
+    .wish-board {
+      display: grid;
+      gap: 48px;
+      grid-template-columns: 1fr .7fr;
+      align-items: stretch;
+    }
+    .wish-cta {
+      min-height: 270px;
+      border: 0;
+      border-radius: 22px;
+      background: var(--oat);
+      color: var(--ink);
+    }
+    .wish-cta .send {
+      display: grid;
+      place-items: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: var(--ivory-light);
+      font-size: 1.25rem;
+      transition: background-color .2s var(--ease);
+    }
+    footer {
+      border-top: var(--border-w) solid var(--line);
+      background: var(--ink);
+      color: var(--ivory-light);
+    }
+    .footer-inner {
+      width: min(100%, 1512px);
+      margin-inline: auto;
+      padding: 88px clamp(24px, 5vw, 80px) 42px;
+      align-items: flex-start;
+    }
+    .footer-brand {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      flex-direction: column;
+    }
     /* 页脚的 <img> 已移除（改用文字标志，见 footer-brand 处注释）。
        下面这条 .footer-brand img 的滤镜规则一并删掉了 —— 它正是把 logo 变成白块的元凶，
        留着的话，将来谁再往这一格塞图片都会重蹈覆辙。
@@ -520,17 +1341,80 @@
        它会在层叠里压过 .footer-copyright（同为 0,1,0 的类，但 .footer-brand p
        多一个元素选择器，特异性更高），导致版权行的字号/颜色声明失效。
        改成只点名 .footer-tagline，两条规则各管各的，互不干扰。 */
-    .footer-tagline { max-width: 24ch; font-family: var(--font-serif); font-size: 1.1rem; }
     /* 版权单独一行。
        原来把「文案 · © 2026 FlowBee」塞在同一个 <p> 里，窄屏下文案会折行，
        版权就被一起带到第二行的行尾，孤零零挂在那儿（用户截图里就是这个样子）。
        拆成两个 <p> 后：文案自己折行、版权永远独立成行，
        而且 .footer-brand 是 column + gap，两行之间自然有一段间距，不用再手写 margin。
        版权用更小的字号和更暗的颜色，明确它不是正文的一部分。 */
-    .footer-copyright { margin: 0; max-width: none; font-family: var(--font-sans); font-size: .875rem; line-height: 1.6; color: #87867f; }
-    .footer-links { max-width: 540px; display: grid; grid-template-columns: repeat(2,1fr); gap: 18px 48px; font-size: 1rem; }
-    @media (max-width: 900px) { .hero-grid, .wish-board { grid-template-columns: 1fr; } .hero { min-height: auto; padding-top: 82px; } .hero-art { min-height: 330px; } .nav-links { gap: 16px; } }
-    @media (max-width: 719px) { .nav-inner { min-height: 68px; } .nav-links, .try-group { display: none; } .hero h1 { font-size: clamp(3.3rem, 16vw, 5.2rem); } .hero-copy { font-size: 1.25rem; } .hero-art { margin-top: 12px; padding: 18px; border-radius: 20px; } .api-journey { margin-top: 54px; } .section { padding-block: 82px; } .stats { grid-template-columns: 1fr; gap: 24px; } .stat-card { border-right: 0; border-bottom: 1px solid #14141326; padding-bottom: 24px; } .footer-links { grid-template-columns: 1fr 1fr; } }
+    .footer-copyright {
+      margin: 0;
+      max-width: none;
+      font-family: var(--font-sans);
+      font-size: .875rem;
+      line-height: 1.6;
+      color: #87867f;
+    }
+    .footer-links {
+      display: grid;
+      flex-wrap: wrap;
+      gap: 18px 48px;
+      max-width: 540px;
+      grid-template-columns: repeat(2,1fr);
+      font-size: 1rem;
+    }
+    @media (max-width: 900px) {
+      .hero-grid, .wish-board {
+        grid-template-columns: 1fr;
+      }
+      .hero {
+        min-height: auto;
+        padding-top: 82px;
+      }
+      .hero-art {
+        min-height: 330px;
+      }
+      .nav-links {
+        gap: 16px;
+      }
+    }
+    @media (max-width: 719px) {
+      .nav-inner {
+        min-height: 68px;
+      }
+      .nav-links, .try-group {
+        display: none;
+      }
+      .hero h1 {
+        font-size: clamp(3.3rem, 16vw, 5.2rem);
+      }
+      .hero-copy {
+        font-size: 1.25rem;
+      }
+      .hero-art {
+        margin-top: 12px;
+        padding: 18px;
+        border-radius: 20px;
+      }
+      .api-journey {
+        margin-top: 54px;
+      }
+      .section {
+        padding-block: 82px;
+      }
+      .stats {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      .stat-card {
+        border-right: 0;
+        border-bottom: 1px solid #14141326;
+        padding-bottom: 24px;
+      }
+      .footer-links {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
     /* ===== 灵感轮播 =====
        骨架照抄 anthropic.com/careers 的 IllustratedCarousel（12 栏网格）：
          · 左栏 header = grid-column 1/5，只有标题，整块固定不动；
@@ -555,57 +1439,196 @@
        左右边界由容器统一决定 —— 不要再在这里写 width / margin-inline 去凑口径，
        那正是之前"往两边超出"的来源：写死的数字在某个断点必然对不上容器。
        容器负责页边距，卡片只管自己的底与内边距。 */
-    @media (min-width: 1001px) {
-      .editorial-feature { margin: 0 0 124px; display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 32px; row-gap: 28px; padding: 36px; border-radius: 28px; background: var(--ivory-medium); }
-    }    .editorial-feature__header { grid-column: 1 / 5; display: flex; flex-direction: column; gap: 12px; }
-    .editorial-feature__header h2 { max-width: 14em; font-size: clamp(1.7rem, 2.3vw, 2.35rem); line-height: 1.25; }
-
-    .carousel__wrapper { grid-column: 5 / 13; display: flex; flex-direction: column; min-width: 0; }
-    .carousel__viewport { position: relative; width: 100%; min-width: 0; overflow: hidden; }
+    .editorial-feature__header {
+      grid-column: 1 / 5;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .editorial-feature__header h2 {
+      max-width: 14em;
+      font-size: clamp(1.7rem, 2.3vw, 2.35rem);
+      line-height: 1.25;
+    }
+    .carousel__wrapper {
+      grid-column: 5 / 13;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .carousel__viewport {
+      position: relative;
+      width: 100%;
+      min-width: 0;
+      overflow: hidden;
+    }
     /* 轨道靠 scroll-snap 分页；滚动条一律藏起来，翻页只走箭头 / 横扫 / 左右键。 */
-    .carousel__track { display: flex; flex-direction: row; gap: 24px; margin: 0; padding: 0; list-style: none; overflow-x: auto; overscroll-behavior-x: contain; scroll-behavior: smooth; scroll-snap-type: x mandatory; scrollbar-width: none; }
-    .carousel__track::-webkit-scrollbar { display: none; }
+    .carousel__track {
+      display: flex;
+      flex-direction: row;
+      gap: 24px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+    .carousel__track::-webkit-scrollbar {
+      display: none;
+    }
     /* 轮播项：**不要底色、不要内边距**。
        参考里这一项就是透明的 —— 插图直接放在米色卡片上，翻页时才有那种
        「图和文案在整块区域里切换」的连贯感。加个白底会把它切成"卡中卡"，
        图、文案、分割线三者也就各自错开了，对不齐。
        去掉 padding 之后，插图的上下边界 = 项高 = 分割线的位置基准，
        插图的左边界 = 计数器对齐的基线，三个需求一起满足。 */
-    .carousel__item { flex: 0 0 100%; width: 100%; display: flex; flex-direction: row; align-items: center; gap: 32px; scroll-snap-align: start; }
-
+    .carousel__item {
+      flex: 0 0 100%;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 32px;
+      scroll-snap-align: start;
+    }
     /* 插图块：正方形。宽度用能写死的算法值 —— 项内是「插图 : 文字」两列，
        49% 这个比值是按参考的 12 栏数学反推的（插图占卡片约 31%，实测参考 31.1%）。
        不要写 aspect-ratio 反推高度，那会让高度被宽度顶起来、整块撑得很壮。 */
-    .carousel__illustration { position: relative; flex: none; width: 52%; aspect-ratio: 1; overflow: hidden; border-radius: 12px; }
-    .carousel__illustration--cactus { background: var(--cactus); }
-    .carousel__illustration--olive { background: #d7ddc7; }
-
-    .editorial-mark { position: absolute; border: 2px solid var(--ink); border-radius: 50%; }
-    .editorial-mark--one { width: 58%; aspect-ratio: 1; top: 21%; left: 8%; border-width: 1.5%; }
-    .editorial-mark--two { width: 34%; aspect-ratio: 1; top: 33%; left: 38%; border-width: 3.5%; border-color: var(--ivory-light); }
-    .editorial-mark--three { width: 16%; aspect-ratio: 1; top: 44%; left: 63%; background: var(--clay); border: 0; }
-
-    .carousel__content { flex: 1 1 auto; min-width: 0; width: 50%; max-width: 480px; display: flex; flex-direction: column; gap: 8px; }
-    .carousel__item-title { font-size: clamp(1.1rem, 1.35vw, 1.35rem); line-height: 1.35; }
-    .carousel__item-body { margin: 0; font-family: var(--font-serif); font-size: .95rem; line-height: 1.7; color: var(--muted); }
-    .editorial-link { display: inline-flex; gap: 8px; align-self: flex-start; margin-top: 8px; color: var(--muted); font-size: .9rem; text-decoration: none; }
-    .editorial-link span { transition: transform .2s var(--ease); }
-    .editorial-link:hover span { transform: translate(4px,-4px); }
-
+    .carousel__illustration {
+      position: relative;
+      flex: none;
+      width: 52%;
+      aspect-ratio: 1;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+    .carousel__illustration--cactus {
+      background: var(--cactus);
+    }
+    .carousel__illustration--olive {
+      background: #d7ddc7;
+    }
+    .editorial-mark {
+      position: absolute;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+    }
+    .editorial-mark--one {
+      width: 58%;
+      aspect-ratio: 1;
+      top: 21%;
+      left: 8%;
+      border-width: 1.5%;
+    }
+    .editorial-mark--two {
+      width: 34%;
+      aspect-ratio: 1;
+      top: 33%;
+      left: 38%;
+      border-width: 3.5%;
+      border-color: var(--ivory-light);
+    }
+    .editorial-mark--three {
+      width: 16%;
+      aspect-ratio: 1;
+      top: 44%;
+      left: 63%;
+      background: var(--clay);
+      border: 0;
+    }
+    .carousel__content {
+      flex: 1 1 auto;
+      min-width: 0;
+      width: 50%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .carousel__item-title {
+      font-size: clamp(1.1rem, 1.35vw, 1.35rem);
+      line-height: 1.35;
+    }
+    .carousel__item-body {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: .95rem;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+    .editorial-link {
+      display: inline-flex;
+      gap: 8px;
+      align-self: flex-start;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: .9rem;
+      text-decoration: none;
+    }
+    .editorial-link span {
+      transition: transform .2s var(--ease);
+    }
+    .editorial-link:hover span {
+      transform: translate(4px,-4px);
+    }
     /* 翻页控件：左边界必须对齐**插图的左边界**，不是卡片的左内边界 ——
        这是参考里最容易被忽略的一处细节（01/07 是在图片左脚下面，和图片左边对齐），
        上边那条分割线也起于同一点、向右延伸到卡片右内边界。
        插图左边界正好落在第 5 栏起点（header 的右边界），所以直接 grid-column: 5 / -1。 */
-    .carousel__controls { grid-column: 5 / -1; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 16px; border-top: var(--border-w) solid rgba(20, 20, 19, .12); }
-    .carousel__count { margin: 0; font-size: .95rem; font-weight: 500; }
-    .carousel__sep { margin-inline: 6px; color: var(--muted); }
-    .carousel__buttons { display: flex; gap: 8px; }
-    .carousel__arrow { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; border: var(--border-w) solid rgba(20, 20, 19, .22); border-radius: var(--radius-md); background: var(--ivory-light); color: var(--ink); cursor: pointer; transition: background-color .16s var(--ease), opacity .16s var(--ease); }
-    .carousel__arrow:hover:not(:disabled) { background: var(--ivory-medium); }
-    .carousel__arrow:disabled { opacity: .5; cursor: default; }
-    .carousel__arrow svg { width: 16px; height: 16px; }
-    .carousel__arrow:focus-visible, .carousel__track:focus-visible { outline: 2px solid var(--clay); outline-offset: 4px; }
-
+    .carousel__controls {
+      grid-column: 5 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-top: 16px;
+      border-top: var(--border-w) solid rgba(20, 20, 19, .12);
+    }
+    .carousel__count {
+      margin: 0;
+      font-size: .95rem;
+      font-weight: 500;
+    }
+    .carousel__sep {
+      margin-inline: 6px;
+      color: var(--muted);
+    }
+    .carousel__buttons {
+      display: flex;
+      gap: 8px;
+    }
+    .carousel__arrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border: var(--border-w) solid rgba(20, 20, 19, .22);
+      border-radius: var(--radius-md);
+      background: var(--ivory-light);
+      color: var(--ink);
+      cursor: pointer;
+      transition: background-color .16s var(--ease), opacity .16s var(--ease);
+    }
+    .carousel__arrow:hover:not(:disabled) {
+      background: var(--ivory-medium);
+    }
+    .carousel__arrow:disabled {
+      opacity: .5;
+      cursor: default;
+    }
+    .carousel__arrow svg {
+      width: 16px;
+      height: 16px;
+    }
+    .carousel__arrow:focus-visible, .carousel__track:focus-visible {
+      outline: 2px solid var(--clay);
+      outline-offset: 4px;
+    }
     /* 1000px 起 12 栏就太窄了：左右拆成上下，轮播占满整行。
        控件本来就铺满 12 栏，这里不用再动。
        插图这时也要收一档：轮播区从 8 栏变成了满宽，52% 会显得很壮
@@ -613,107 +1636,366 @@
     @media (max-width: 1000px) {
       /* 页边距交给外层 .container，这里只处理排布。
          （之前在这写 margin-inline 去"补"口径，结果是 720~1000 那段和容器对不上。） */
-      .editorial-feature__header { grid-column: 1 / -1; }
-      .carousel__wrapper { grid-column: 1 / -1; }
-      .carousel__illustration { width: 38%; }
+      .editorial-feature__header {
+        grid-column: 1 / -1;
+      }
+      .carousel__wrapper {
+        grid-column: 1 / -1;
+      }
+      .carousel__illustration {
+        width: 38%;
+      }
     }
     @media (max-width: 719px) {
       /* 必须把 12 栏收成单栏：留着 repeat(12,1fr) 的话，每条 1fr 轨道的最小内容宽度
          会把容器顶宽（实测 352px 挤进 255px 的内容区，整页横向溢出）。
          页边距由外层 .container 负责，这里不再写 width。 */
-      .editorial-feature { margin-bottom: 82px; grid-template-columns: 1fr; padding: 24px; border-radius: 20px; row-gap: 24px; }
-      .editorial-feature__header { grid-column: 1 / -1; }
-      .carousel__wrapper { grid-column: 1 / -1; gap: 20px; min-width: 0; }
-      .carousel__viewport { min-width: 0; }
-      .editorial-feature__header h2 { font-size: 1.6rem; }
-      .carousel__track { gap: 20px; }
+      .editorial-feature__header {
+        grid-column: 1 / -1;
+      }
+      .carousel__wrapper {
+        grid-column: 1 / -1;
+        gap: 20px;
+        min-width: 0;
+      }
+      .carousel__viewport {
+        min-width: 0;
+      }
+      .editorial-feature__header h2 {
+        font-size: 1.6rem;
+      }
+      .carousel__track {
+        gap: 20px;
+      }
       /* 手机上文字和插图改成上下堆叠。项宽必须明确绑成 100%：
          轨道是横向 flex，项又是 column，不锁死宽度的话项会被内容顶宽，
          反过来把轨道撑开，形成循环放大（实测项宽 332px 挤进 255px 的卡片）。 */
-      .carousel__item { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .carousel__item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
       /* 参考在手机上把插图缩到 112px 见方、图 80px，不跟着视口放大。 */
-      .carousel__illustration { width: 112px; height: 112px; border-radius: 12px; }
-      .editorial-mark--one { width: 58px; height: 58px; border-width: 2px; }
-      .editorial-mark--two { width: 38px; height: 38px; border-width: 7px; }
-      .editorial-mark--three { width: 18px; height: 18px; }
-      .carousel__content { width: 100%; max-width: none; }
-      .carousel__item-title { font-size: 1.15rem; }
-      .carousel__item-body { font-size: .95rem; }
-      .carousel__controls { padding-top: 14px; }
+      .carousel__illustration {
+        width: 112px;
+        height: 112px;
+        border-radius: 12px;
+      }
+      .editorial-mark--one {
+        width: 58px;
+        height: 58px;
+        border-width: 2px;
+      }
+      .editorial-mark--two {
+        width: 38px;
+        height: 38px;
+        border-width: 7px;
+      }
+      .editorial-mark--three {
+        width: 18px;
+        height: 18px;
+      }
+      .carousel__content {
+        width: 100%;
+        max-width: none;
+      }
+      .carousel__item-title {
+        font-size: 1.15rem;
+      }
+      .carousel__item-body {
+        font-size: .95rem;
+      }
+      .carousel__controls {
+        padding-top: 14px;
+      }
     }
-    .closing-cta { margin-top: 20px; padding: 132px 24px 146px; background: var(--ink); color: var(--ivory-light); text-align: center; }
-    .closing-cta h2 { max-width: 18ch; margin: 0 auto; font-size: clamp(3rem, 6vw, 6.8rem); line-height: .94; letter-spacing: -.07em; }
-    .closing-cta__button { display: inline-flex; align-items: center; gap: 14px; margin-top: 48px; padding: 12px 20px; border-radius: 8px; background: var(--ivory-light); color: var(--ink); font-size: 1rem; font-weight: 500; line-height: 1; text-decoration: none; transition: transform .2s var(--ease), background-color .2s var(--ease); }
-    .closing-cta__button:hover { transform: translateY(-3px); background: var(--oat); }
+    .closing-cta__button {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 48px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      background: var(--ivory-light);
+      color: var(--ink);
+      font-size: 1rem;
+      font-weight: 500;
+      line-height: 1;
+      text-decoration: none;
+      transition: transform .2s var(--ease), background-color .2s var(--ease);
+    }
+    .closing-cta__button:hover {
+      transform: translateY(-3px);
+      background: var(--oat);
+    }
     /* Chinese editorial typography: full-width glyphs need more leading than Latin display type. */
-    *, *::before, *::after { letter-spacing: 0 !important; }
-    body { font-size: 16px; line-height: 1.75; }
-    .nav-inner { min-height: 76px; max-width: 1360px; padding-inline: 40px; }
-    .nav-brand { font-size: 24px; font-weight: 600; text-transform: none; }
-    .nav-mark-img { display: block; width: 30px; height: 30px; }
+    *, *::before, *::after {
+      letter-spacing: 0 !important;
+    }
+    body {
+      background: var(--ivory-light);
+      color: var(--ink);
+      line-height: 1.75;
+      font-size: 16px;
+    }
+    .nav-inner {
+      min-height: 76px;
+      max-width: 1360px;
+      padding-inline: 40px;
+    }
     /* 只保留导航 logo 的 hidden 兜底；.footer-brand img 已随图片删除 */
-    .nav-mark-img[hidden] { display: none; }
+    .nav-mark-img[hidden] {
+      display: none;
+    }
     /* 页脚文字标志：页脚是深色底，用象牙白；字体跟全站一致（衬线体的拉丁字形）。
        原来写的 Georgia 是 Windows 系统衬线，和站内自托管的思源宋体不是一支，
        同一页里会出现两种衬线，所以改成 --font-serif 打头、Georgia 只作兜底。
        字重 600 是为了压住深色底上的视觉变细效应 —— 浅字压深底会比在浅底上显得更细。 */
-    .footer-wordmark { font-family: var(--font-serif); font-size: 32px; font-weight: 600; line-height: 1.2; color: var(--ivory-light); }
-    .nav-link { font-size: 14px; }
-    .nav-actions { z-index: 21; }
-    .button, .try-group, .closing-cta__button { border-radius: 6px; }
-    .button, .try-main { min-height: 38px; font-size: 14px; }
-    .try-toggle { width: 38px; }
-    .hero { min-height: 0; padding: 110px 0 80px; }
-    .hero-grid { display: block; max-width: 1280px; padding-inline: 40px; }
-    .hero-content { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
-    .hero .eyebrow { grid-column: 1 / -1; font-size: 14px; color: var(--muted); margin-bottom: 12px; }
-    .hero h1 { max-width: none; margin: 0; font-family: var(--font-sans); font-size: 60px; line-height: 1.3; font-weight: 600; }
-    .hero-copy { margin: 0; max-width: 26em; font-family: var(--font-serif); font-size: 23px; font-weight: 500; line-height: 1.75; color: var(--ink); }
-    .hero-tagline { display: block; font: inherit; }
-    .hero-actions { margin-top: 28px; }
-    .connection { position: relative; overflow: hidden; background: #dce5df; color: #233f34; padding: 42px 40px 28px; }
-    .connection-inner { max-width: 1200px; margin: auto; }
-    .connection-heading { display: flex; justify-content: space-between; align-items: center; gap: 24px; }
-    .connection h2 { font-family: var(--font-serif); font-size: 30px; line-height: 1.5; font-weight: 400; }
-    .connection-link { font-size: 14px; text-underline-offset: 5px; white-space: nowrap; }
-    .connection-map { position: relative; height: 230px; margin-top: 20px; }
-    .connection-map svg { position: absolute; width: 100%; height: 100%; overflow: visible; }
-    .connection-track { fill: none; stroke: #718e7e; stroke-width: 1; }
-    .connection-signal { fill: none; stroke: #345f49; stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: .035 .965; stroke-dashoffset: 0; }
-    .connection-node { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); padding: 12px 24px; background: #dce5df; font-family: Georgia, serif; font-size: 30px; }
-    .connection-labels { position: absolute; top: 0; bottom: 0; display: flex; flex-direction: column; justify-content: space-around; font-size: 13px; }
-    .connection-labels--left { left: 0; }
-    .connection-labels--right { right: 0; text-align: right; }
-    .connection-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; border-top: 1px solid #233f3426; padding-top: 18px; font-size: 12px; }
-    .connection-foot code { font-family: var(--font-sans); }
-    .connection-motion { border: 0; background: transparent; color: inherit; cursor: pointer; min-width: 44px; min-height: 44px; margin: -12px 0; font-size: 18px; }
-    .connection[data-paused="true"] .connection-signal { animation-play-state: paused; }
-    @media (prefers-reduced-motion: no-preference) {
-      .connection-signal { animation: connect-flow 6s linear infinite; }
-      .connection-signal:nth-child(2) { animation-delay: -2s; }
-      .connection-signal:nth-child(3) { animation-delay: -4s; }
-      @keyframes connect-flow { to { stroke-dashoffset: -1; } }
+    .footer-wordmark {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      font-weight: 600;
+      line-height: 1.2;
+      color: var(--ivory-light);
     }
-    .section { max-width: 1280px; padding: 88px 40px; }
-    .section > .container { padding: 0; }
+    .button, .try-group, .closing-cta__button {
+      border-radius: 6px;
+    }
+    .button, .try-main {
+      min-height: 38px;
+      font-size: 14px;
+    }
+    .hero {
+      min-height: 0;
+      padding: 110px 0 80px;
+    }
+    .hero-grid {
+      display: block;
+      max-width: 1280px;
+      padding-inline: 40px;
+    }
+    .hero-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .hero .eyebrow {
+      grid-column: 1 / -1;
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .hero h1 {
+      max-width: none;
+      margin: 0;
+      font-family: var(--font-sans);
+      font-size: 60px;
+      line-height: 1.3;
+      font-weight: 600;
+    }
+    .hero-copy {
+      margin: 0;
+      max-width: 26em;
+      font-family: var(--font-serif);
+      font-size: 23px;
+      font-weight: 500;
+      line-height: 1.75;
+      color: var(--ink);
+    }
+    .hero-tagline {
+      display: block;
+      font: inherit;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+    .connection {
+      position: relative;
+      overflow: hidden;
+      background: #dce5df;
+      color: #233f34;
+      padding: 42px 40px 28px;
+    }
+    .connection-inner {
+      max-width: 1200px;
+      margin: auto;
+    }
+    .connection-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+    }
+    .connection h2 {
+      font-family: var(--font-serif);
+      font-size: 30px;
+      line-height: 1.5;
+      font-weight: 400;
+    }
+    .connection-link {
+      font-size: 14px;
+      text-underline-offset: 5px;
+      white-space: nowrap;
+    }
+    .connection-map {
+      position: relative;
+      height: 230px;
+      margin-top: 20px;
+    }
+    .connection-map svg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    .connection-track {
+      fill: none;
+      stroke: #718e7e;
+      stroke-width: 1;
+    }
+    .connection-signal {
+      fill: none;
+      stroke: #345f49;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-dasharray: .035 .965;
+      stroke-dashoffset: 0;
+    }
+    .connection-node {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      padding: 12px 24px;
+      background: #dce5df;
+      font-family: Georgia, serif;
+      font-size: 30px;
+    }
+    .connection-labels {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      font-size: 13px;
+    }
+    .connection-labels--left {
+      left: 0;
+    }
+    .connection-labels--right {
+      right: 0;
+      text-align: right;
+    }
+    .connection-foot {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      border-top: 1px solid #233f3426;
+      padding-top: 18px;
+      font-size: 12px;
+    }
+    .connection-foot code {
+      font-family: var(--font-sans);
+    }
+    .connection-motion {
+      border: 0;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      min-width: 44px;
+      min-height: 44px;
+      margin: -12px 0;
+      font-size: 18px;
+    }
+    .connection[data-paused="true"] .connection-signal {
+      animation-play-state: paused;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .connection-signal {
+        animation: connect-flow 6s linear infinite;
+      }
+      .connection-signal:nth-child(2) {
+        animation-delay: -2s;
+      }
+      .connection-signal:nth-child(3) {
+        animation-delay: -4s;
+      }
+      @keyframes connect-flow {
+        to {
+          stroke-dashoffset: -1;
+        }
+      }
+    }
+    .section {
+      max-width: 1280px;
+      padding: 88px 40px;
+    }
+    .section > .container {
+      padding: 0;
+    }
     /* 卡片外层照抄 .section 的几何：max-width 1280 + padding-inline 40。
        这样它的内容区宽 = min(视口,1280) - 80，和正文区块逐像素相同
        （正文区块正是 .section 自己）。
        必须同时把 .container 基类的 width: min(100%,1180) 顶掉 ——
        那个 1180 会让它在宽视口下比正文窄 80px。用 max-width 接管即可：
        width 只在两种同时存在时才有约束力，这里改成 auto 让 max-width 说了算。 */
-    .editorial-feature__outer { width: auto; max-width: 1260px; margin-inline: auto; padding-block: 0; padding-inline: 40px; }
-    @media (max-width: 719px) {
-      .editorial-feature__outer { padding-inline: 24px; }
+    .editorial-feature__outer {
+      width: auto;
+      max-width: 1260px;
+      margin-inline: auto;
+      padding-block: 0;
+      padding-inline: 40px;
     }
-    .section-heading { max-width: 760px; }
-    .section-heading h2, .support-panel h2 { font-family: var(--font-serif); font-size: 36px; font-weight: 400; line-height: 1.5; }
-    .section-heading { max-width: 760px; }
-    .section-heading p { font-family: var(--font-sans); font-size: 16px; line-height: 1.85; color: var(--muted); }
-    .stats { grid-template-columns: minmax(0,1fr); padding-block: 30px; }
-    .stat-card { border: 0; padding: 0; }
-    .stat-label, .stat-unit { font-size: 14px; }
-    .stat-number { font-size: 64px; font-weight: 400; line-height: 1.2; }
+    @media (max-width: 719px) {
+      .editorial-feature__outer {
+        padding-inline: 24px;
+      }
+    }
+    .section-heading h2, .support-panel h2 {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+    .section-heading {
+      max-width: 760px;
+      margin-bottom: 32px;
+    }
+    .section-heading p {
+      max-width: 48ch;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.85;
+      font-family: var(--font-sans);
+    }
+    .stats {
+      grid-template-columns: minmax(0,1fr);
+      padding-block: 30px;
+    }
+    .stat-card {
+      border: 0;
+      padding: 0;
+    }
+    .stat-label, .stat-unit {
+      font-size: 14px;
+    }
+    .stat-number {
+      display: block;
+      margin-top: 12px;
+      font-size: 64px;
+      font-variant-numeric: tabular-nums;
+      font-weight: 400;
+      line-height: 1.2;
+      letter-spacing: -.06em;
+      white-space: nowrap;
+    }
     /* 桌面端收回成「一张居中的卡片」：原来是铺满全宽的通栏（border-radius: 0），
        和参考的圆角容器完全不是一回事，也是用户一眼看出"没参考到"的地方。
        容器口径必须跟正文区块一致：内容宽 1180px 居中（和 .container 同口径），
@@ -727,150 +2009,620 @@
        上面那些 max-width 断点**之后**，不带查询的话会反过来覆盖掉所有窄屏规则，
        导致 720~1000 和 ≤719 两段全部退化成通栏（实测 900px 时 L=0 W=885）。 */
     @media (min-width: 1001px) {
-      .editorial-feature { margin-bottom: 0; border-radius: 24px; padding: 36px; background: #ecece7; }
+      .editorial-feature {
+        margin: 0 0 124px;
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        column-gap: 32px;
+        row-gap: 28px;
+        padding: 36px;
+        border-radius: 24px;
+        background: #ecece7;
+        margin-bottom: 0;
+      }
     }
-    .editorial-feature__header h2 { max-width: 18em; font-family: var(--font-serif); font-size: 30px; font-weight: 400; line-height: 1.55; }
-    .carousel__item-title { font-family: var(--font-serif); font-size: 20px; font-weight: 500; line-height: 1.5; }
-    .carousel__item-body { font-family: var(--font-sans); font-size: 15px; line-height: 1.85; }
-    .carousel__illustration { border-radius: 12px; }
-    .wish-cta { border-radius: 6px; min-height: 220px; }
-    .wish-cta h3 { font-family: var(--font-serif); font-size: 30px; font-weight: 400; line-height: 1.5; }
-    .wish-cta p { line-height: 1.8; }
-    .closing-cta { padding: 88px 24px; }
-    .closing-cta h2 { max-width: 20em; font-family: var(--font-serif); font-size: 40px; font-weight: 400; line-height: 1.6; }
+    .editorial-feature__header h2 {
+      max-width: 18em;
+      font-family: var(--font-serif);
+      font-size: 30px;
+      font-weight: 400;
+      line-height: 1.55;
+    }
+    .carousel__item-title {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+    .carousel__item-body {
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.85;
+    }
+    .carousel__illustration {
+      border-radius: 12px;
+    }
+    .wish-cta {
+      border-radius: 6px;
+      min-height: 220px;
+    }
+    .wish-cta h3 {
+      margin-top: 8px;
+      font-size: 30px;
+      font-weight: 400;
+      letter-spacing: -.06em;
+      font-family: var(--font-serif);
+      line-height: 1.5;
+    }
+    .wish-cta p {
+      margin-top: 6px;
+      color: #6b4a3d;
+      font-size: .9375rem;
+      line-height: 1.8;
+    }
+    .closing-cta {
+      margin-top: 20px;
+      padding: 88px 24px;
+      background: var(--ink);
+      color: var(--ivory-light);
+      text-align: center;
+    }
+    .closing-cta h2 {
+      max-width: 20em;
+      margin: 0 auto;
+      font-size: 40px;
+      line-height: 1.6;
+      letter-spacing: -.07em;
+      font-family: var(--font-serif);
+      font-weight: 400;
+    }
     /* 只作用于文案那一行。原来写的是 .footer-brand p，会把版权行一起改掉 ——
        版权要的是更小的字号 + 更暗的颜色，不能被这条覆盖。 */
-    .footer-tagline { font-family: var(--font-sans); font-size: 14px; }
+    .footer-tagline {
+      max-width: 24ch;
+      font-family: var(--font-sans);
+      font-size: 14px;
+    }
     @media (max-width: 1000px) {
-      .hero-content { gap: 20px 40px; }
-      .hero h1 { font-size: 64px; }
-      .hero-tagline { font-size: 30px; }
-      .nav-links { gap: 16px; }
-      .nav-inner { padding-inline: 24px; }
+      .hero-content {
+        gap: 20px 40px;
+      }
+      .hero h1 {
+        font-size: 64px;
+      }
+      .hero-tagline {
+        font-size: 30px;
+      }
+      .nav-links {
+        gap: 16px;
+      }
+      .nav-inner {
+        padding-inline: 24px;
+      }
     }
     @media (max-width: 719px) {
-      .nav-inner { min-height: 68px; padding-inline: 20px; }
-      .mobile-menu { top: 68px; height: calc(100dvh - 68px); }
-      .hero { padding: 42px 0 40px; }
-      .hero-grid { padding-inline: 24px; }
-      .hero-content { grid-template-columns: 1fr; gap: 22px; }
-      .hero .eyebrow { margin-bottom: 0; font-size: 12px; }
-      .hero h1 { font-size: 56px; }
-      .hero-tagline { font-size: 28px; margin-top: 12px; }
-      .hero-copy { font-size: 15px; line-height: 1.8; }
-      .hero-actions { margin-top: 22px; gap: 10px; }
-      .button { padding-inline: 18px; }
-      .connection { padding: 28px 24px 20px; }
-      .connection-heading { display: block; }
-      .connection h2 { font-size: 23px; }
-      .connection-link { display: inline-block; margin-top: 10px; font-size: 12px; }
-      .connection-map { height: 180px; margin-top: 12px; }
-      .connection-node { padding: 8px; font-size: 23px; }
-      .connection-labels { font-size: 11px; }
-      .connection-foot { font-size: 11px; }
-      .section { padding: 56px 24px; }
-      .section-heading h2, .support-panel h2 { font-size: 28px; }
-      .section-heading p { font-size: 15px; }
-      .stat-number { font-size: 38px; }
-      .editorial-feature { padding: 24px 20px 28px; margin-bottom: 0; border-radius: 20px; }
-      .editorial-feature__header h2 { font-size: 24px; }
-      .wish-cta h3 { font-size: 27px; }
-      .closing-cta h2 { font-size: 30px; }
-      .footer-inner { padding: 48px 24px 32px; }
+      .nav-inner {
+        min-height: 68px;
+        padding-inline: 20px;
+      }
+      .mobile-menu {
+        top: 68px;
+        height: calc(100dvh - 68px);
+      }
+      .hero-grid {
+        padding-inline: 24px;
+      }
+      .hero .eyebrow {
+        margin-bottom: 0;
+        font-size: 12px;
+      }
+      .hero h1 {
+        font-size: 56px;
+      }
+      .hero-tagline {
+        font-size: 28px;
+        margin-top: 12px;
+      }
+      .hero-copy {
+        font-size: 15px;
+        line-height: 1.8;
+      }
+      .hero-actions {
+        margin-top: 22px;
+        gap: 10px;
+      }
+      .button {
+        padding-inline: 18px;
+      }
+      .connection {
+        padding: 28px 24px 20px;
+      }
+      .connection-heading {
+        display: block;
+      }
+      .connection h2 {
+        font-size: 23px;
+      }
+      .connection-link {
+        display: inline-block;
+        margin-top: 10px;
+        font-size: 12px;
+      }
+      .connection-map {
+        height: 180px;
+        margin-top: 12px;
+      }
+      .connection-node {
+        padding: 8px;
+        font-size: 23px;
+      }
+      .connection-labels {
+        font-size: 11px;
+      }
+      .connection-foot {
+        font-size: 11px;
+      }
+      .section {
+        padding: 56px 24px;
+      }
+      .section-heading h2, .support-panel h2 {
+        font-size: 28px;
+      }
+      .section-heading p {
+        font-size: 15px;
+      }
+      .stat-number {
+        font-size: 38px;
+      }
+      .editorial-feature {
+        margin-bottom: 0;
+        grid-template-columns: 1fr;
+        padding: 24px 20px 28px;
+        border-radius: 20px;
+        row-gap: 24px;
+      }
+      .editorial-feature__header h2 {
+        font-size: 24px;
+      }
+      .wish-cta h3 {
+        font-size: 27px;
+      }
+      .closing-cta h2 {
+        font-size: 30px;
+      }
+      .footer-inner {
+        padding: 48px 24px 32px;
+      }
     }
-    .image-story { position: relative; padding-block: 24px; }
-    .image-story__frame { position: relative; isolation: isolate; overflow: hidden; width: 100%; height: min(680px, 76svh); min-height: 440px; background: #303c48; color: white; clip-path: inset(0 max(40px, calc((100% - 1200px)/2)) round 24px); }
-    .image-story__image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 62%; transform: scale(1.12); }
-    .image-story__frame::after { content: ''; position: absolute; inset: 0; background: rgb(0 0 0 / 24%); pointer-events: none; }
-    .image-story__copy { position: relative; z-index: 1; height: 100%; width: min(100% - 80px, 1200px); margin-inline: auto; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 56px 32px; text-align: center; color: #fff; }
-    .image-story__eyebrow { font-size: 16px; margin-bottom: 22px; }
-    .image-story h2 { max-width: 10em; font-family: var(--font-serif); font-size: 56px; font-weight: 600; line-height: 1.4; text-wrap: balance; }
-    .image-story h2 span { display: block; }
-    .image-story__description { max-width: 21em; margin-top: 20px; font-family: var(--font-serif); font-weight: 600; font-size: 22px; line-height: 1.65; text-wrap: balance; }
-    .image-story__link { min-height: 36px; margin-top: 24px; padding: 8px 16px; background: var(--ivory-light); color: var(--ink); font-size: 14px; font-weight: 500; }
-    .image-story__link:hover { background: white; }
+    .image-story {
+      position: relative;
+      padding-block: 24px;
+    }
+    .image-story__frame {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      width: 100%;
+      height: min(680px, 76svh);
+      min-height: 440px;
+      background: #303c48;
+      color: white;
+      clip-path: inset(0 max(40px, calc((100% - 1200px)/2)) round 24px);
+    }
+    .image-story__image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 62%;
+      transform: scale(1.12);
+    }
+    .image-story__frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgb(0 0 0 / 24%);
+      pointer-events: none;
+    }
+    .image-story__copy {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      width: min(100% - 80px, 1200px);
+      margin-inline: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 56px 32px;
+      text-align: center;
+      color: #fff;
+    }
+    .image-story__eyebrow {
+      font-size: 16px;
+      margin-bottom: 22px;
+    }
+    .image-story h2 {
+      max-width: 10em;
+      font-family: var(--font-serif);
+      font-size: 56px;
+      font-weight: 600;
+      line-height: 1.4;
+      text-wrap: balance;
+    }
+    .image-story h2 span {
+      display: block;
+    }
+    .image-story__description {
+      max-width: 21em;
+      margin-top: 20px;
+      font-family: var(--font-serif);
+      font-weight: 600;
+      font-size: 22px;
+      line-height: 1.65;
+      text-wrap: balance;
+    }
+    .image-story__link {
+      min-height: 36px;
+      margin-top: 24px;
+      padding: 8px 16px;
+      background: var(--ivory-light);
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .image-story__link:hover {
+      background: white;
+    }
     @media (max-width: 1000px) {
-      .hero h1 { font-size: 48px; }
-      .hero-tagline { font-size: inherit; }
-      .hero-copy { font-size: 20px; }
-      .image-story h2 { font-size: 42px; }
+      .hero h1 {
+        font-size: 48px;
+      }
+      .hero-tagline {
+        font-size: inherit;
+      }
+      .hero-copy {
+        font-size: 20px;
+      }
+      .image-story h2 {
+        font-size: 42px;
+      }
     }
     @media (max-width: 719px) {
-      .hero { padding: 46px 0 36px; }
-      .hero-content { gap: 26px; }
-      .hero h1 { font-size: 38px; }
-      .hero-tagline { margin: 0; font-size: inherit; }
-      .hero-copy { font-size: 18px; line-height: 1.85; }
-      .image-story { padding-block: 12px; }
-      .image-story__frame { height: 560px; min-height: 0; max-height: 78svh; clip-path: inset(0 16px round 16px); }
-      .image-story__copy { width: calc(100% - 32px); padding: 32px 20px; }
-      .image-story__image { object-position: 62% center; }
-      .image-story h2 { font-size: 30px; }
-      .image-story__eyebrow { font-size: 14px; margin-bottom: 16px; }
-      .image-story__description { max-width: 17em; font-size: 17px; }
+      .hero {
+        padding: 46px 0 36px;
+      }
+      .hero-content {
+        grid-template-columns: 1fr;
+        gap: 26px;
+      }
+      .hero h1 {
+        font-size: 38px;
+      }
+      .hero-tagline {
+        margin: 0;
+        font-size: inherit;
+      }
+      .hero-copy {
+        font-size: 18px;
+        line-height: 1.85;
+      }
+      .image-story {
+        padding-block: 12px;
+      }
+      .image-story__frame {
+        height: 560px;
+        min-height: 0;
+        max-height: 78svh;
+        clip-path: inset(0 16px round 16px);
+      }
+      .image-story__copy {
+        width: calc(100% - 32px);
+        padding: 32px 20px;
+      }
+      .image-story__image {
+        object-position: 62% center;
+      }
+      .image-story h2 {
+        font-size: 30px;
+      }
+      .image-story__eyebrow {
+        font-size: 14px;
+        margin-bottom: 16px;
+      }
+      .image-story__description {
+        max-width: 17em;
+        font-size: 17px;
+      }
     }
     @media (prefers-reduced-motion: reduce) {
-      .image-story__frame { clip-path: inset(0); }
-      .image-story__image { transform: none; }
+      .image-story__frame {
+        clip-path: inset(0);
+      }
+      .image-story__image {
+        transform: none;
+      }
     }
     /* Navigation shares the editorial content edges. */
-    .site-nav { background: var(--bg); border-bottom-color: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; }
-    .nav-inner { max-width: 1440px; min-height: 72px; padding-inline: 24px; gap: 24px; }
-    .nav-brand { flex-shrink: 0; gap: 8px; font-size: 22px; font-weight: 600; }
-    .nav-mark-img { width: 28px; height: 28px; }
-    .nav-links { gap: 24px; }
-    .nav-link { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 400; white-space: nowrap; }
-    .nav-link[hidden] { display: none; }
-    .nav-link:hover { color: var(--ink); text-decoration-color: var(--u); }
-    .nav-link:focus-visible { outline: var(--border-w) solid var(--accent-deep); outline-offset: 4px; border-radius: 2px; }
-    .nav-actions { gap: 12px; }
-    .nav-bell, .nav-burger { width: 44px; height: 44px; border: 0; border-radius: 4px; color: var(--ink); }
-    .try-group { background: var(--ink); border-radius: 5px; }
-    .try-group:hover { background: var(--slate-medium); }
-    .try-main { min-height: 38px; padding: 8px 16px; font-size: 14px; }
-    .try-toggle { width: 38px; border-radius: 0 5px 5px 0; }
-    .try-toggle:hover { background: #ffffff12; }
-    .nav-burger-icon { position: relative; width: 22px; height: 18px; display: block; }
-    .nav-burger-icon span { position: absolute; left: 0; width: 22px; height: 1.5px; transition: transform .2s ease, opacity .15s ease; }
-    .nav-burger-icon span:nth-child(1) { top: 1px; }
-    .nav-burger-icon span:nth-child(2) { top: 8px; }
-    .nav-burger-icon span:nth-child(3) { top: 15px; width: 14px; }
-    .nav-burger[aria-expanded="true"] { color: var(--ink); }
-    .nav-burger[aria-expanded="true"] .nav-burger-icon span:first-child { width: 22px; transform: translateY(7px) rotate(45deg); }
-    .nav-burger[aria-expanded="true"] .nav-burger-icon span:nth-child(2) { opacity: 0; }
-    .nav-burger[aria-expanded="true"] .nav-burger-icon span:last-child { width: 22px; transform: translateY(-7px) rotate(-45deg); }
-    .mobile-backdrop { top: 68px; height: calc(100dvh - 68px); }
-    .mobile-menu { top: 68px; height: calc(100dvh - 68px); padding: 24px 24px calc(24px + env(safe-area-inset-bottom)); border-top: 0; }
-    .mobile-links { gap: 0; }
-    .mobile-link { min-height: 68px; padding: 12px 0; border-radius: 0; border-bottom: 1px solid #1414130a; font-size: 24px; font-weight: 500; }
-    .mobile-link::after { content: '\2197'; margin-left: auto; font-size: 20px; font-weight: 400; }
-    .mobile-actions { gap: 12px; padding-top: 28px; border: 0; }
-    .mobile-actions .button { min-height: 44px; }
+    .site-nav {
+      position: sticky;
+      z-index: 1000;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      border-bottom: var(--border-w) solid var(--line);
+      border-bottom-color: transparent;
+    }
+    .nav-inner {
+      max-width: 1440px;
+      min-height: 72px;
+      padding-inline: 24px;
+      gap: 24px;
+    }
+    .nav-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink);
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -.04em;
+      text-decoration: none;
+      text-transform: none;
+      flex-shrink: 0;
+    }
+    .nav-mark-img {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-sm);
+      object-fit: contain;
+      display: block;
+    }
+    .nav-links {
+      gap: 24px;
+    }
+    .nav-link {
+      --u: currentColor;
+      position: relative;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 400;
+      text-decoration-line: underline;
+      text-decoration-color: transparent;
+      text-decoration-thickness: from-font;
+      text-underline-offset: 4px;
+      transition: color .2s var(--ease), text-decoration-color .2s var(--ease);
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      white-space: nowrap;
+    }
+    .nav-link[hidden] {
+      display: none;
+    }
+    .nav-link:hover {
+      color: var(--ink);
+      text-decoration-color: var(--u);
+    }
+    .nav-link:focus-visible {
+      outline: var(--border-w) solid var(--accent-deep);
+      outline-offset: 4px;
+      border-radius: 2px;
+    }
+    .nav-actions {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 21;
+    }
+    .nav-bell, .nav-burger {
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 4px;
+      color: var(--ink);
+    }
+    .try-group {
+      background: var(--ink);
+      border-radius: 5px;
+    }
+    .try-group:hover {
+      background: var(--slate-medium);
+    }
+    .try-main {
+      min-height: 38px;
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+    .try-toggle {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      padding: 0;
+      border: 0;
+      border-left: var(--border-w) solid #faf9f540;
+      border-radius: 0 5px 5px 0;
+      background: transparent;
+      color: var(--ivory-light);
+      cursor: pointer;
+    }
+    .try-toggle:hover {
+      background: #ffffff12;
+    }
+    .nav-burger-icon {
+      display: block;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: .28rem;
+      width: 22px;
+      position: relative;
+      height: 18px;
+    }
+    .nav-burger-icon span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      border-radius: 100rem;
+      background: currentColor;
+      transition: transform .2s ease, opacity .15s ease;
+      position: absolute;
+      left: 0;
+    }
+    .nav-burger-icon span:nth-child(1) {
+      top: 1px;
+    }
+    .nav-burger-icon span:nth-child(2) {
+      top: 8px;
+    }
+    .nav-burger-icon span:nth-child(3) {
+      top: 15px;
+      width: 14px;
+    }
+    .nav-burger[aria-expanded="true"] {
+      border-color: var(--cloud-medium);
+      color: var(--ink);
+    }
+    .nav-burger[aria-expanded="true"] .nav-burger-icon span:first-child {
+      width: 22px;
+      transform: translateY(7px) rotate(45deg);
+    }
+    .nav-burger[aria-expanded="true"] .nav-burger-icon span:nth-child(2) {
+      opacity: 0;
+    }
+    .nav-burger[aria-expanded="true"] .nav-burger-icon span:last-child {
+      width: 22px;
+      transform: translateY(-7px) rotate(-45deg);
+    }
+    .mobile-backdrop {
+      position: fixed;
+      z-index: 15;
+      top: 68px;
+      left: 0;
+      right: 0;
+      height: calc(100dvh - 68px);
+      background: #1414134d;
+      -webkit-backdrop-filter: blur(2px);
+      backdrop-filter: blur(2px);
+    }
+    .mobile-menu {
+      top: 68px;
+      height: calc(100dvh - 68px);
+      padding: 24px 24px calc(24px + env(safe-area-inset-bottom));
+      border-top: 0;
+    }
+    .mobile-links {
+      display: grid;
+      gap: 0;
+    }
+    .mobile-link {
+      display: flex;
+      align-items: center;
+      min-height: 68px;
+      padding-inline: 12px;
+      border-radius: 0;
+      color: var(--ink);
+      font-size: 24px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background-color .18s var(--ease);
+      padding: 12px 0;
+      border-bottom: 1px solid #1414130a;
+    }
+    .mobile-link::after {
+      content: '\2197';
+      margin-left: auto;
+      font-size: 20px;
+      font-weight: 400;
+    }
+    .mobile-actions {
+      display: grid;
+      gap: 12px;
+      margin-top: auto;
+      padding-top: 28px;
+      border-top: var(--border-w) solid var(--line);
+      border: 0;
+    }
+    .mobile-actions .button {
+      width: 100%;
+      min-height: 44px;
+    }
     @media (min-width: 960px) {
-      .nav-links, .try-group { display: flex; }
-      .nav-burger, .mobile-menu, .mobile-backdrop { display: none; }
+      .nav-links, .try-group {
+        display: flex;
+      }
+      .nav-burger, .mobile-menu, .mobile-backdrop {
+        display: none;
+      }
     }
     @media (max-width: 959px) {
-      .nav-inner { min-height: 68px; padding-inline: 24px; }
-      .nav-links, .try-group { display: none; }
-      .nav-burger { display: grid; }
-      .mobile-menu:not([hidden]) { display: flex; }
+      .nav-inner {
+        min-height: 68px;
+        padding-inline: 24px;
+      }
+      .nav-links, .try-group {
+        display: none;
+      }
+      .nav-burger {
+        display: grid;
+      }
+      .mobile-menu:not([hidden]) {
+        display: flex;
+      }
     }
     @media (max-width: 359px) {
-      .nav-inner { padding-inline: 20px; gap: 12px; }
-      .nav-actions { gap: 4px; }
+      .nav-inner {
+        padding-inline: 20px;
+        gap: 12px;
+      }
+      .nav-actions {
+        gap: 4px;
+      }
     }
     @media (prefers-reduced-motion: no-preference) {
       /* 展开动画对齐官网：菜单淡入 200ms，主列同时从顶部"长出来"。
          分层不能省：整块不用 transform（会连 ::before 的视觉一起位移）。
          注意用 backwards 而不是 both —— both 会把动画结束后的 opacity/transform 一并钉死，
          一旦 JS 在动画结束前又触发一次开合，残留态就可能让菜单整块变成 opacity:0（实测踩到过）。 */
-      .try-menu:not([hidden]) { animation: nav-enter .2s cubic-bezier(.77, 0, .175, 1) backwards; }
-      .try-menu:not([hidden]) .try-menu-scroll { animation: menu-unfold .2s cubic-bezier(.77, 0, .175, 1) backwards; }
-      .mobile-menu:not([hidden]) { animation: mobile-unfold .85s cubic-bezier(.4,0,.2,1) backwards; }
-      @keyframes nav-enter { from { opacity: 0; } to { opacity: 1; } }
-      @keyframes menu-unfold { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
-      @keyframes mobile-unfold { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
+      .try-menu:not([hidden]) {
+        animation: nav-enter .2s cubic-bezier(.77, 0, .175, 1) backwards;
+      }
+      .try-menu:not([hidden]) .try-menu-scroll {
+        animation: menu-unfold .2s cubic-bezier(.77, 0, .175, 1) backwards;
+      }
+      .mobile-menu:not([hidden]) {
+        animation: mobile-unfold .85s cubic-bezier(.4,0,.2,1) backwards;
+      }
+      @keyframes nav-enter {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes menu-unfold {
+        from {
+          opacity: 0;
+          transform: translateY(-4px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes mobile-unfold {
+        from {
+          clip-path: inset(0 0 100% 0);
+        }
+        to {
+          clip-path: inset(0);
+        }
+      }
     }
     /* ===== Q&A 抽屉（照 anthropic.com/careers 的 DrawerList）=====
        纯 CSS 实现，不用 JS：<input type="checkbox"> 当开关，
@@ -889,19 +2641,32 @@
       border-top: var(--border-w) solid var(--line);
     }
     .qa__inner {
-      width: min(100%, var(--container)); margin-inline: auto;
-      display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+      width: min(100%, var(--container));
+      margin-inline: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
       align-items: start;
     }
     /* 左栏：eyebrow + 标题 + 导语。
        参考里这块宽度只占左栏的约 72%（415 里头 ~300 宽的文字），
        所以给一个上限，别让它拉满整栏 —— 拉满会让标题折行位置和参考差很远。 */
-    .qa .section-heading { max-width: 360px; margin-bottom: 0; }
+    .qa .section-heading {
+      max-width: 360px;
+      margin-bottom: 0;
+    }
     /* 参考的标题明显比本站 .section-heading h2（36px）小一档，
        cap 高只有左栏导语 x-height 的 1.84 倍。按参考比例压到 32px，
        行高 1.25 也收紧一点（参考里标题是一行，行高压太松会显得孤立）。 */
-    .qa .section-heading h2 { font-size: 32px; line-height: 1.25; }
-    .qa .section-heading p { max-width: 34ch; font-size: 15px; line-height: 1.7; }
+    .qa .section-heading h2 {
+      font-size: 32px;
+      line-height: 1.25;
+    }
+    .qa .section-heading p {
+      max-width: 34ch;
+      font-size: 15px;
+      line-height: 1.7;
+    }
     /* 右栏列表：**顶部不出分割线**，每项只带自己下方一条线
        （即第 N 项的下边线同时是第 N+1 项的上边界感）。
        所以这里不能再给 .qa__list 加 border-top，
@@ -915,91 +2680,184 @@
        而左栏 h2 只往下推 ~10px，所以列表要上提 10px 才能让两边文字顶齐平。
        ⚠️ 实测：margin-top: -10px 时两边文字顶差 = 0（-20px 会低 10px、-30px 会高 10px）。
        改标题字号或 label padding 时这个值要跟着重算，别照抄。 */
-    .qa__list { margin-top: -10px; }
-    .qa-item { border-bottom: var(--border-w) solid var(--line); }
+    .qa__list {
+      margin-top: -10px;
+    }
+    .qa-item {
+      border-bottom: var(--border-w) solid var(--line);
+    }
     /* 视觉上隐藏，但仍可聚焦、可被读屏朗读 —— 不用 display:none，
        否则键盘 Tab 不到，整块就变成鼠标专用了。 */
     .qa-item__input {
-      position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
-      overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); border: 0;
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      border: 0;
     }
     /* 参考的项高是 60px 左右、文字在项内垂直居中，左右不留内缩
        （文字和分割线左右端点对齐）。所以 padding 只在上下，不给左右。 */
     .qa-item__label {
-      display: flex; align-items: center; justify-content: space-between; gap: 24px;
-      padding: 20px 0; cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 20px 0;
+      cursor: pointer;
       transition: color .18s var(--ease);
     }
-    .qa-item__label:hover { color: var(--accent-deep); }
+    .qa-item__label:hover {
+      color: var(--accent-deep);
+    }
     /* 键盘聚焦时给整个标签一圈描边（input 已视觉隐藏，
        不给替代态的话键盘用户根本看不到自己在哪一项）。 */
-    .qa-item__input:focus-visible + .qa-item__label { outline: var(--border-w) solid var(--accent-deep); outline-offset: 4px; }
+    .qa-item__input:focus-visible + .qa-item__label {
+      outline: var(--border-w) solid var(--accent-deep);
+      outline-offset: 4px;
+    }
     /* 参考里列表项字号明显小于左栏导语，实测量出约 17.4px。
        本站导语是 15px，按比例取 17px：比导语略大一点点，层级和参考一致。 */
     .qa-item__q {
-      font-family: var(--font-sans); font-size: 17px; font-weight: 500; line-height: 1.45;
+      font-family: var(--font-sans);
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.45;
       text-wrap: balance;
     }
     /* 加号图标：两条 1.5px 细杠，横杠随展开旋转 90° 收进竖杠，形成"减号"。
        尺寸照官网 ToggleIcon：外框 24px、杠长 13.5px。 */
-    .qa-item__icon { position: relative; flex: none; width: 24px; height: 24px; color: var(--muted); }
+    .qa-item__icon {
+      position: relative;
+      flex: none;
+      width: 24px;
+      height: 24px;
+      color: var(--muted);
+    }
     .qa-item__icon::before, .qa-item__icon::after {
-      content: ''; position: absolute; top: 50%; left: 50%; background: currentColor;
-      transform: translate(-50%, -50%); border-radius: 100rem;
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      background: currentColor;
+      transform: translate(-50%, -50%);
+      border-radius: 100rem;
       transition: transform .28s var(--ease), opacity .28s var(--ease);
     }
-    .qa-item__icon::before { width: 13.5px; height: 1.5px; }
-    .qa-item__icon::after { width: 1.5px; height: 13.5px; }
-    .qa-item__label:hover .qa-item__icon { color: var(--accent-deep); }
-    .qa-item__input:checked + .qa-item__label .qa-item__icon::before { transform: translate(-50%, -50%) rotate(90deg); opacity: 0; }
-    .qa-item__input:checked + .qa-item__label { color: var(--accent-deep); }
+    .qa-item__icon::before {
+      width: 13.5px;
+      height: 1.5px;
+    }
+    .qa-item__icon::after {
+      width: 1.5px;
+      height: 13.5px;
+    }
+    .qa-item__label:hover .qa-item__icon {
+      color: var(--accent-deep);
+    }
+    .qa-item__input:checked + .qa-item__label .qa-item__icon::before {
+      transform: translate(-50%, -50%) rotate(90deg);
+      opacity: 0;
+    }
+    .qa-item__input:checked + .qa-item__label {
+      color: var(--accent-deep);
+    }
     /* 展开动画用 grid-template-rows: 0fr → 1fr，而不是 max-height。
        max-height 得猜一个够大的值，猜大了展开会有明显延迟、猜小了内容被截；
        0fr→1fr 是浏览器按真实高度插值，多长的答案都跟手，也不用改数值。
        内层必须再包一个 div 并设 overflow:hidden，否则 grid item 会溢出来。 */
     .qa-item__panel {
-      display: grid; grid-template-rows: 0fr;
+      display: grid;
+      grid-template-rows: 0fr;
       transition: grid-template-rows .34s var(--ease);
     }
-    .qa-item__input:checked + .qa-item__label + .qa-item__panel { grid-template-rows: 1fr; }
-    .qa-item__panel > div { overflow: hidden; }
-    .qa-item__body { padding: 0 0 22px; }
+    .qa-item__input:checked + .qa-item__label + .qa-item__panel {
+      grid-template-rows: 1fr;
+    }
+    .qa-item__panel > div {
+      overflow: hidden;
+    }
+    .qa-item__body {
+      padding: 0 0 22px;
+    }
     .qa-item__body p {
-      margin: 0; color: var(--muted);
-      font-family: var(--font-sans); font-size: 15px; line-height: 1.8;
+      margin: 0;
+      color: var(--muted);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.8;
     }
-    .qa-item__body p + p { margin-top: 10px; }
+    .qa-item__body p + p {
+      margin-top: 10px;
+    }
     .qa-item__body code {
-      padding: 2px 6px; border-radius: var(--radius-sm); background: var(--ivory-medium);
-      font-family: var(--font-sans); font-size: .9em; color: var(--slate-medium);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      background: var(--ivory-medium);
+      font-family: var(--font-sans);
+      font-size: .9em;
+      color: var(--slate-medium);
     }
-    .qa-item__body a { color: var(--accent-deep); text-underline-offset: 3px; }
+    .qa-item__body a {
+      color: var(--accent-deep);
+      text-underline-offset: 3px;
+    }
     /* 窄屏折回单列。参考的移动截图（294.5px 宽）也是"标题在上、列表在下"，
        而且两段之间隔了 71px —— 不是简单贴在一起，
        所以这里 margin-top 给到 44px 而不是 0，保留段落感。
        ⚠️ 窄屏**不能**沿用桌面的 -10px：那个负值是给"两栏并排、文字顶对齐"用的，
        折成单列后两栏变上下堆叠，再用负边距会把列表顶到标题上重叠。 */
     @media (max-width: 900px) {
-      .qa__inner { grid-template-columns: 1fr; gap: 0; }
-      .qa .section-heading { max-width: none; }
-      .qa__list { margin-top: 44px; }
+      .qa__inner {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+      .qa .section-heading {
+        max-width: none;
+      }
+      .qa__list {
+        margin-top: 44px;
+      }
     }
     @media (max-width: 719px) {
-      .qa { padding-block: 64px 56px; }
-      .qa .section-heading h2 { font-size: 26px; }
-      .qa .section-heading p { font-size: 15px; }
-      .qa__list { margin-top: 40px; }
-      .qa-item__label { padding: 17px 0; gap: 16px; }
-      .qa-item__q { font-size: 16px; }
-      .qa-item__body { padding-bottom: 20px; }
-      .qa-item__body p { font-size: 15px; }
+      .qa {
+        padding-block: 64px 56px;
+      }
+      .qa .section-heading h2 {
+        font-size: 26px;
+      }
+      .qa .section-heading p {
+        font-size: 15px;
+      }
+      .qa__list {
+        margin-top: 40px;
+      }
+      .qa-item__label {
+        padding: 17px 0;
+        gap: 16px;
+      }
+      .qa-item__q {
+        font-size: 16px;
+      }
+      .qa-item__body {
+        padding-bottom: 20px;
+      }
+      .qa-item__body p {
+        font-size: 15px;
+      }
     }
     @media (prefers-reduced-motion: reduce) {
-      .qa-item__panel { transition: none; }
-      .qa-item__icon::before, .qa-item__icon::after { transition: none; }
+      .qa-item__panel {
+        transition: none;
+      }
+      .qa-item__icon::before, .qa-item__icon::after {
+        transition: none;
+      }
     }
-
-</style>
+  </style>
 </head>
 <body>
   <!-- 导航栏里的站内链接，显隐跟着站内后台「导航栏模块」的开关走（页尾脚本读 /api/status
