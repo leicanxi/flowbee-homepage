@@ -18,6 +18,7 @@ verify-*.png
 _*.html
 _*.py
 _*.cjs
+_*.log
 
 # 基线备份（改名前的整份页面快照）
 *.bak
