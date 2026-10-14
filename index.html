@@ -845,8 +845,10 @@
     }
     /* ===== 支持者气泡墙 =====
        数据来自站内公开接口 /api/sponsors（同源，见页尾脚本）。气泡的圆角、
-       底色、称号配色与头像取色都沿用了站内 /sponsors 页那套，所以同一个人
+       底色、称号配色与字母头像取色都沿用了站内 /sponsors 页那套，所以同一个人
        在首页和站内是同一个颜色 —— 两边对不上会显得像两个站。
+       头像优先用后端下发的 /api/avatar 代理地址（真实头像，且地址里不含 QQ 号），
+       只有拿不到代理地址、或者图片加载失败时才落回哈希底色 + 首字母。
        形状是长条而不是方块：宽度由内容决定、高度只由行数决定，寄语长短不同
        气泡就长一截或短一截，但始终是薄薄一条。 */
     .backers {
@@ -913,6 +915,14 @@
       color: var(--ivory-light);
       font-size: .75rem;
       font-weight: 500;
+    }
+    /* 真实头像铺满这个圆。object-fit 让非正方形的源图居中裁切，而不是被拉变形。 */
+    .bubble-avatar img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
     }
     .bubble-body {
       min-width: 0;
@@ -3537,7 +3547,8 @@
        所以不需要任何跨域配置，也不需要每次有人支持就回来手改这份 HTML。
        三种情况各有降级：接口拿不到 / 活动未开启 → 整块保持隐藏；
        活动开着但还没有人支持 → 只留入口，不留一面空墙。
-       头像用站内同一套哈希取色，同一个人在首页与 /sponsors 页是同一个颜色。 */
+       头像优先用名单里的 avatar 字段（站内 /api/avatar 代理下发，真实头像且地址里
+       不含 QQ 号）；字段缺失或图片取不到时，用同一套哈希取色 + 首字母兜底。 */
     (function () {
       var section = document.getElementById('backers');
       var wall = document.getElementById('bubble-wall');
@@ -3567,6 +3578,16 @@
           (52 + ((hash >> 4) % 8)) + '%)';
       }
 
+      /* 字母兜底。与站内 getUserAvatarFallback 一致：取首字大写，取不到就用问号。 */
+      function fallbackLetter(name) {
+        return ((name || '').trim().charAt(0) || '?').toUpperCase();
+      }
+
+      function paintLetterAvatar(node, name) {
+        node.style.background = avatarBackground(name);
+        node.textContent = fallbackLetter(name);
+      }
+
       function el(tag, className) {
         var node = document.createElement(tag);
         if (className) node.className = className;
@@ -3582,9 +3603,25 @@
           avatar.style.background = '#ece5d8';
           avatar.style.color = '#8b8070';
           avatar.textContent = '♥';
+        } else if (sponsor.avatar) {
+          /* 站内 /api/avatar 代理下发的真实头像。地址是相对路径，首页与接口同源，
+             照抄即可；后端刻意不下发 qlogo 原始地址，所以这里不含 QQ 号。
+             图片取不到（代理 404 / 用户关掉了「使用账号头像」/ 网络问题）就当场
+             落回哈希字母 —— 与站内 Avatar 的 Fallback 行为一致，墙面上不留白。 */
+          /* 不用 loading="lazy"：气泡在横向轨道里靠 transform 滚动，
+             浏览器对 transform 动画的可见性判断不可靠，容易出现"滚到眼前才闪出来"。
+             图片只有几 KB，整批直接加载反而是稳的那一个选择。 */
+          var face = el('img');
+          face.alt = '';
+          face.decoding = 'async';
+          face.src = sponsor.avatar;
+          face.addEventListener('error', function () {
+            if (face.parentNode) face.parentNode.removeChild(face);
+            paintLetterAvatar(avatar, sponsor.name);
+          });
+          avatar.appendChild(face);
         } else {
-          avatar.style.background = avatarBackground(sponsor.name);
-          avatar.textContent = (sponsor.name.trim().charAt(0) || '?').toUpperCase();
+          paintLetterAvatar(avatar, sponsor.name);
         }
 
         var body = el('div', 'bubble-body');
